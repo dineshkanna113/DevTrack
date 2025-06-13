@@ -11,3 +11,15 @@ class UserLogin(BaseModel):
 
 class TokenResponse(BaseModel):
     access_token: str
+class IssueCreate(BaseModel):
+    title: str
+    description: str
+
+class IssueOut(BaseModel):
+    id: int
+    title: str
+    description: str
+    status: str
+
+    class Config:
+        orm_mode = True
