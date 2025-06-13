@@ -16,7 +16,7 @@ export default function AuthForm({ isLogin }) {
       : { username, email, password };
 
     try {
-      const res = await axios.post(`http://127.0.0.1:8000${endpoint}`, payload);
+      const res = await axios.post(`https://devtrack-backend-tkdg.onrender.com${endpoint}`, payload);
 
       if (isLogin) {
         const token = res.data.access_token;
