@@ -80,7 +80,7 @@ export default function Issues() {
             <button
               style={{ marginRight: "10px", backgroundColor: "#3498db", color: "white", border: "none", padding: "5px" }}
               onClick={async () => {
-                await axios.patch(`https://devtrack-backend-758s.onrender.com/${issue.id}/close`, {}, {
+                await axios.patch(`https://devtrack-backend-758s.onrender.com${issue.id}/close`, {}, {
                   headers: { Authorization: `Bearer ${token}` }
                 });
                 alert("Issue status toggled");
@@ -93,7 +93,7 @@ export default function Issues() {
               style={{ backgroundColor: "#e74c3c", color: "white", border: "none", padding: "5px" }}
               onClick={async () => {
                 if (window.confirm("Delete this issue?")) {
-                  await axios.delete(`https://devtrack-backend-758s.onrender.com/issues/${issue.id}`, {
+                  await axios.delete(`https://devtrack-backend-758s.onrender.com/issues${issue.id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                   });
                   alert("Issue deleted");

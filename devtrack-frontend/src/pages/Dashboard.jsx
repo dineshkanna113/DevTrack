@@ -13,7 +13,7 @@ export default function Dashboard() {
       return;
     }
 
-    axios.get("http://127.0.0.1:8000/auth/me", {
+    axios.get("https://devtrack-backend-758s.onrender.com/auth/me", {
       headers: {
         Authorization: `Bearer ${token}`
       }
