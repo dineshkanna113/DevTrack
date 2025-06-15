@@ -18,7 +18,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "https://dev-track-git-main-dinesh-kannas-projects.vercel.app/"  # Replace with your actual Vercel URL when deployed
+        "https://devtrack-frontend-five.vercel.app/"  # Replace with your actual Vercel URL when deployed
     ],
     allow_credentials=True,
     allow_methods=["*"],
