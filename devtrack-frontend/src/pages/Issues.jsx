@@ -10,7 +10,7 @@ export default function Issues() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    axios.get("https://devtrack-backend-758s.onrender.com/issues", {
+    axios.get("https://devtrack-backend-758s.onrender.com/issues/", {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => setIssues(res.data))
@@ -28,7 +28,7 @@ export default function Issues() {
     setLoading(true);
 
     try {
-      await axios.post("https://devtrack-backend-758s.onrender.com/issues", form, {
+      await axios.post("https://devtrack-backend-758s.onrender.com/issues/", form, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setForm({ title: "", description: "" });
@@ -80,7 +80,7 @@ export default function Issues() {
             <button
               style={{ marginRight: "10px", backgroundColor: "#3498db", color: "white", border: "none", padding: "5px" }}
               onClick={async () => {
-                await axios.patch(`https://devtrack-backend-758s.onrender.com${issue.id}/close`, {}, {
+                await axios.patch(`https://devtrack-backend-758s.onrender.com/${issue.id}/close`, {}, {
                   headers: { Authorization: `Bearer ${token}` }
                 });
                 alert("Issue status toggled");
@@ -93,7 +93,7 @@ export default function Issues() {
               style={{ backgroundColor: "#e74c3c", color: "white", border: "none", padding: "5px" }}
               onClick={async () => {
                 if (window.confirm("Delete this issue?")) {
-                  await axios.delete(`https://devtrack-backend-758s.onrender.com/issues${issue.id}`, {
+                  await axios.delete(`https://devtrack-backend-758s.onrender.com/issues/${issue.id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                   });
                   alert("Issue deleted");
