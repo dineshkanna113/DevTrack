@@ -8,33 +8,30 @@ export default function AuthForm({ isLogin }) {
   const [username, setUsername] = useState('');
   const navigate = useNavigate();
   const handleSubmit = async e => {
-    e.preventDefault();
-    const endpoint = isLogin ? "/auth/login" : "/auth/register";
+  e.preventDefault();
+  const endpoint = isLogin ? "/auth/login" : "/auth/register";
+  const payload = { email, password };
 
-    const payload = isLogin
-      ? { email, password }
-      : { username, email, password };
+  try {
+    const res = await axios.post(`https://devtrack-backend-758s.onrender.com${endpoint}`, payload);
 
-    try {
-      const res = await axios.post(`https://devtrack-backend-758s.onrender.com/${endpoint}`, payload);
-
-      if (isLogin) {
-        const token = res.data.access_token;
-        localStorage.setItem("token", token);
-        alert("Login successful!");
-        navigate("/Dashboard");
-      } else {
-        alert(res.data.message);  // e.g., "User registered successfully"
-      }
-    } catch (err) {
-      console.error("Error:", err);
-      if (err.response && err.response.data && err.response.data.detail) {
-        alert("Auth failed: " + err.response.data.detail);
-      } else {
-        alert("Auth failed: " + err.message);
-      }
+    if (isLogin) {
+      const token = res.data.access_token;
+      localStorage.setItem("token", token);
+      alert("Login successful!");
+      navigate("/Dashboard");
+    } else {
+      alert(res.data.message);  // e.g., "User registered successfully"
     }
-  };
+  } catch (err) {
+    console.error("Error:", err);
+    if (err.response?.data?.detail) {
+      alert("Auth failed: " + err.response.data.detail);
+    } else {
+      alert("Auth failed: " + err.message);
+    }
+  }
+};
 
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '300px', margin: 'auto' }}>

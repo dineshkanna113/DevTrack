@@ -10,30 +10,24 @@ export default function Issues() {
   const token = localStorage.getItem("token");
 
   const fetchIssues = async () => {
-  try {
-    const token = localStorage.getItem("token");
-    const res = await axios.get("https://devtrack-backend-758s.onrender.com/issues", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    setIssues(res.data);
-  } catch (err) {
-    console.error("Error fetching issues:", err);
-  }
-};
+    try {
+      const res = await axios.get("https://devtrack-backend-758s.onrender.com/issues", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setIssues(res.data);
+    } catch (err) {
+      console.error("Error fetching issues:", err);
+    }
+  };
 
   useEffect(() => {
-    axios.get("https://devtrack-backend-758s.onrender.com/issues/", {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    .then(res => setIssues(res.data))
-    .catch(() => alert("Error loading issues"));
+    fetchIssues();
   }, []);
 
   const handleSubmit = async e => {
     e.preventDefault();
-
     if (!form.title.trim() || !form.description.trim()) {
       alert("Please fill in all fields");
       return;
@@ -58,6 +52,7 @@ export default function Issues() {
   return (
     <div style={{ maxWidth: "800px", margin: "auto", padding: "1rem" }}>
       <h2>DevTrack – Issues</h2>
+
       <form onSubmit={handleSubmit}>
         <input
           style={{ width: "100%", padding: "8px" }}
@@ -85,7 +80,7 @@ export default function Issues() {
 
       <h3>Issue List</h3>
       {issues
-        .filter(issue => filter === "all" ? true : issue.status === filter)
+        .filter(issue => filter === "all" || issue.status === filter)
         .map(issue => (
           <div key={issue.id} style={{ border: "1px solid #ccc", padding: "10px", marginTop: "10px" }}>
             <strong>{issue.title}</strong>
@@ -94,7 +89,7 @@ export default function Issues() {
             <button
               style={{ marginRight: "10px", backgroundColor: "#3498db", color: "white", border: "none", padding: "5px" }}
               onClick={async () => {
-                await axios.patch(`https://devtrack-backend-758s.onrender.com/${issue.id}/close`, {}, {
+                await axios.patch(`https://devtrack-backend-758s.onrender.com/issues/${issue.id}/close`, {}, {
                   headers: { Authorization: `Bearer ${token}` }
                 });
                 alert("Issue status toggled");
