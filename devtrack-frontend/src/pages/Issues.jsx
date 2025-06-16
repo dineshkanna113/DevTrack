@@ -9,6 +9,20 @@ export default function Issues() {
 
   const token = localStorage.getItem("token");
 
+  const fetchIssues = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await axios.get("https://devtrack-backend-758s.onrender.com/issues", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setIssues(res.data);
+  } catch (err) {
+    console.error("Error fetching issues:", err);
+  }
+};
+
   useEffect(() => {
     axios.get("https://devtrack-backend-758s.onrender.com/issues/", {
       headers: { Authorization: `Bearer ${token}` }
@@ -33,7 +47,7 @@ export default function Issues() {
       });
       setForm({ title: "", description: "" });
       alert("Issue added");
-      window.location.reload();
+      fetchIssues();
     } catch {
       alert("Error adding issue");
     } finally {
@@ -84,7 +98,7 @@ export default function Issues() {
                   headers: { Authorization: `Bearer ${token}` }
                 });
                 alert("Issue status toggled");
-                window.location.reload();
+                fetchIssues();
               }}
             >
               Mark as {issue.status === "open" ? "Closed" : "Open"}
@@ -97,7 +111,7 @@ export default function Issues() {
                     headers: { Authorization: `Bearer ${token}` }
                   });
                   alert("Issue deleted");
-                  window.location.reload();
+                  fetchIssues();
                 }
               }}
             >
