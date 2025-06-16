@@ -1,7 +1,6 @@
 from pydantic import BaseModel, EmailStr
 
 class UserCreate(BaseModel):
-    username: str
     email: EmailStr
     password: str
 
@@ -11,6 +10,7 @@ class UserLogin(BaseModel):
 
 class TokenResponse(BaseModel):
     access_token: str
+
 class IssueCreate(BaseModel):
     title: str
     description: str
@@ -22,4 +22,4 @@ class IssueOut(BaseModel):
     status: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True  # replaces deprecated orm_mode
