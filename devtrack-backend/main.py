@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from database import Base, engine
 from routes import auth, issues
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+load_dotenv()
 
 # Initialize app
 app = FastAPI(title="DevTrack API")

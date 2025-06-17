@@ -3,21 +3,16 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-# Load environment variables (optional)
+# For loading .env in local dev
 from dotenv import load_dotenv
 load_dotenv()
 
-# Default to local SQLite; override with environment variable if deploying
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./devtrack.db")
+# Use PostgreSQL connection from environment variable
+POSTGRES_URL = os.getenv("DATABASE_URL")
 
-# Required for SQLite (skip this if using PostgreSQL)
-connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+# Create engine
+engine = create_engine(POSTGRES_URL)
 
-# Create SQLAlchemy engine
-engine = create_engine(DATABASE_URL, connect_args=connect_args)
-
-# Session factory
+# Session and Base setup
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# Base model for all ORM classes
 Base = declarative_base()
