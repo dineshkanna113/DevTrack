@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 
 export default function AuthForm({ isLogin }) {
   const [email, setEmail] = useState('');
@@ -8,57 +8,39 @@ export default function AuthForm({ isLogin }) {
   const [username, setUsername] = useState('');
   const API_URL = "https://devtrack-backend-758s.onrender.com";
   const navigate = useNavigate();
+
   const handleSubmit = async e => {
-  e.preventDefault();
-  const endpoint = isLogin ? "/auth/login" : "/auth/register";
-  const payload = { email, password };
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const endpoint = isLogin ? "/auth/login" : "/auth/register";
-  const payload = { email, password };
+    e.preventDefault();
 
-  try {
-    const res = await axios.post(`${API_URL}${endpoint}`, payload, {
-      headers: { "Content-Type": "application/json" },
-      withCredentials: true
-    });
+    const endpoint = isLogin ? "/auth/login" : "/auth/register";
 
-    console.log("✅ SUCCESS RESPONSE:", res);  // <-- See what comes back
+    const payload = isLogin
+      ? { email, password }
+      : { email, password }; // ← You can add username if your backend uses it
 
-    if (isLogin) {
-      const token = res.data.access_token;
-      localStorage.setItem("token", token);
-      alert("Login successful!");
-      navigate("/dashboard");
-    } else {
-      alert("Registration successful!");
+    try {
+      const res = await axios.post(`${API_URL}${endpoint}`, payload, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
+
+      console.log("✅ RESPONSE:", res.data);
+
+      if (isLogin) {
+        const token = res.data.access_token;
+        localStorage.setItem("token", token);
+        alert("Login successful!");
+        navigate("/dashboard");
+      } else {
+        alert("Registration successful!");
+        // NOTE: You can't call setIsLogin here because isLogin is a prop
+        navigate("/login"); // redirect to login instead
+      }
+    } catch (err) {
+      console.error("❌ Auth error:", err);
+      alert("Auth failed: " + (err.response?.data?.detail || err.message));
     }
-
-  } catch (err) {
-    console.error("❌ Network/Auth error:", err);
-    alert("Auth failed: " + (err.response?.data?.detail || err.message));
-  }
-};
-  try {
-    const res = await axios.post(`${API_URL}${endpoint}`, payload, {
-      headers: { "Content-Type": "application/json" }
-    });
-
-    if (isLogin) {
-      const token = res.data.access_token;
-      localStorage.setItem("token", token);
-      alert("Login successful!");
-      navigate("/dashboard");
-    } else {
-      alert("Registration successful!");
-    }
-
-  } catch (err) {
-    console.error("Network/Auth error:", err);
-    alert("Auth failed: " + (err.response?.data?.detail || err.message));
-  }
-};
-
+  };
 
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '300px', margin: 'auto' }}>
