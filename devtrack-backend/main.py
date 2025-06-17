@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import Response
 from database import Base, engine
 from fastapi import Response
 from routes import auth, issues
@@ -29,6 +30,9 @@ app.add_middleware(
 )
 from fastapi.responses import Response
 
+@app.get("/")
+def root():
+    return {"message": "Backend live"}
 @app.options("/auth/register")
 def preflight_register():
     return Response(status_code=200)
