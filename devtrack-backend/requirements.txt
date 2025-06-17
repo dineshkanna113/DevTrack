@@ -76,3 +76,5 @@ wheel==0.42.0
 wrapt==1.16.0
 yarl==1.19.0
 email-validator
+python-dotenv
+psycopg2-binary
