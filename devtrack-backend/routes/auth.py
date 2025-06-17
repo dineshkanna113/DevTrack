@@ -19,8 +19,8 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/register")
-def register(user: UserCreate, db: Session = Depends(get_db)):
+@router.post("/register", methods=["POST", "OPTIONS"])
+async def register(user: UserCreate, db: Session = Depends(get_db)):
     existing = db.query(User).filter(User.email == user.email).first()
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -30,8 +30,8 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "User registered successfully"}
 
-@router.post("/login", response_model=TokenResponse)
-def login(user: UserLogin, db: Session = Depends(get_db)):
+@router.post("/login", methods=["POST", "OPTIONS"])
+async def login(user: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user.email).first()
     if not db_user or not pwd_context.verify(user.password, db_user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
