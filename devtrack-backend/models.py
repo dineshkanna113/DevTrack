@@ -10,8 +10,9 @@ class User(Base):
     
 class Issue(Base):
     __tablename__ = "issues"
-
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
+    title = Column(String, nullable=False)
     description = Column(String)
-    status = Column(String, default="open")
+    status = Column(Boolean, default=True)  # True = open, False = closed
+    label = Column(String, default="task")  # 🆕 bug, feature, urgent, etc
+    assigned_to = Column(String, default="unassigned")  # 🆕 user email

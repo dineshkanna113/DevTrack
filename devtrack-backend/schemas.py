@@ -10,16 +10,19 @@ class UserLogin(BaseModel):
 
 class TokenResponse(BaseModel):
     access_token: str
-
-class IssueCreate(BaseModel):
+class IssueBase(BaseModel):
     title: str
     description: str
+    status: bool = True
+    label: str = "task"  # 🆕
+    assigned_to: str = "unassigned"  # 🆕
 
-class IssueOut(BaseModel):
+class IssueCreate(IssueBase):
+    pass
+
+class IssueOut(IssueBase):
     id: int
-    title: str
-    description: str
-    status: str
 
     class Config:
-        from_attributes = True  # replaces deprecated orm_mode
+        from_attributes = True
+

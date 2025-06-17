@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from models import Issue
 from database import SessionLocal
 from schemas import IssueCreate, IssueOut
+from typing import List, Optional
 
 router = APIRouter()
 
@@ -21,9 +22,24 @@ def create_issue(issue: IssueCreate, db: Session = Depends(get_db)):
     db.refresh(new_issue)
     return new_issue
 
-@router.get("/issues", response_model=list[IssueOut])
-def list_issues(db: Session = Depends(get_db)):
-    return db.query(Issue).all()
+@router.get("/issues", response_model=List[IssueOut])
+def get_issues(
+    status: Optional[bool] = None,
+    label: Optional[str] = None,
+    assigned_to: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    query = db.query(Issue)
+
+    if status is not None:
+        query = query.filter(Issue.status == status)
+    if label:
+        query = query.filter(Issue.label == label)
+    if assigned_to:
+        query = query.filter(Issue.assigned_to == assigned_to)
+
+    return query.all()
+
 
 @router.delete("/issues/{issue_id}")
 def delete_issue(issue_id: int, db: Session = Depends(get_db)):
