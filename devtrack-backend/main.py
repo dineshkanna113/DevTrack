@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from database import Base, engine
+from fastapi import Response
 from routes import auth, issues
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -26,3 +27,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+@app.options("/auth/login")
+def options_login():
+    return Response(status_code=200)
+
+@app.options("/auth/register")
+def options_register():
+    return Response(status_code=200)
