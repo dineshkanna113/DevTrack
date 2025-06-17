@@ -146,7 +146,7 @@ export default function Issues() {
                   alert("Issue deleted");
                   fetchIssues();
                 }
-              }}
+              }} 
             >
               Delete
             </button>
