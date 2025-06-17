@@ -32,32 +32,40 @@ export default function Issues() {
   }, []);
 
   const handleSubmit = async e => {
-    e.preventDefault();
-    if (!form.title.trim() || !form.description.trim()) {
-      alert("Please fill in all fields");
-      return;
-    }
+  e.preventDefault();
 
-    setLoading(true);
+  if (!form.title.trim() || !form.description.trim()) {
+    alert("Please fill in all fields");
+    return;
+  }
 
-    try {
-      await axios.post("https://devtrack-backend-758s.onrender.com/issues/", {
-        ...form,
-        status: true  // default to open
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+  setLoading(true);
 
-      setForm({ title: "", description: "", label: "task", assigned_to: "unassigned" });
-      alert("Issue added");
-      fetchIssues();
-    } catch (err) {
-      console.error("Error adding issue:", err);
-      alert("Error adding issue");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // ✅ Step 5: Debug - See what you're sending
+  console.log("Submitting issue:", {
+    ...form,
+    status: true
+  });
+
+  try {
+    await axios.post("https://devtrack-backend-758s.onrender.com/issues/", {
+      ...form,
+      status: true
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    setForm({ title: "", description: "", label: "task", assigned_to: "unassigned" });
+    alert("Issue added");
+    fetchIssues();
+  } catch (err) {
+    console.error("Error adding issue:", err);
+    alert("Error adding issue");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div style={{ maxWidth: "800px", margin: "auto", padding: "1rem" }}>
