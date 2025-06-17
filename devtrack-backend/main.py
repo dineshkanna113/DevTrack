@@ -27,10 +27,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-@app.options("/auth/login")
-def options_login():
-    return Response(status_code=200)
+from fastapi.responses import Response
 
 @app.options("/auth/register")
-def options_register():
+def preflight_register():
+    return Response(status_code=200)
+
+@app.options("/auth/login")
+def preflight_login():
     return Response(status_code=200)
