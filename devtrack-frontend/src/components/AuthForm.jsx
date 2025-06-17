@@ -12,7 +12,33 @@ export default function AuthForm({ isLogin }) {
   e.preventDefault();
   const endpoint = isLogin ? "/auth/login" : "/auth/register";
   const payload = { email, password };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const endpoint = isLogin ? "/auth/login" : "/auth/register";
+  const payload = { email, password };
 
+  try {
+    const res = await axios.post(`${API_URL}${endpoint}`, payload, {
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true
+    });
+
+    console.log("✅ SUCCESS RESPONSE:", res);  // <-- See what comes back
+
+    if (isLogin) {
+      const token = res.data.access_token;
+      localStorage.setItem("token", token);
+      alert("Login successful!");
+      navigate("/dashboard");
+    } else {
+      alert("Registration successful!");
+    }
+
+  } catch (err) {
+    console.error("❌ Network/Auth error:", err);
+    alert("Auth failed: " + (err.response?.data?.detail || err.message));
+  }
+};
   try {
     const res = await axios.post(`${API_URL}${endpoint}`, payload, {
       headers: { "Content-Type": "application/json" }
