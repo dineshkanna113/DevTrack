@@ -78,5 +78,5 @@ yarl==1.19.0
 email-validator
 python-dotenv
 psycopg2-binary
-bcrypt
-passlib[bcrypt]
+bcrypt==3.2.2
+

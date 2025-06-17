@@ -25,7 +25,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
     hashed_pw = pwd_context.hash(user.password)
-    new_user = User(username=user.username, email=user.email, password=hashed_pw)
+    new_user = User(email=user.email, password=hashed_pw)
     db.add(new_user)
     db.commit()
     return {"message": "User registered successfully"}
