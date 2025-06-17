@@ -19,6 +19,7 @@ app.include_router(issues.router, tags=["Issues"])
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "http://localhost:5173",
         "https://devtrack-frontend-sigma.vercel.app/"
     ],
     allow_credentials=True,
