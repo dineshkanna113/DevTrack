@@ -10,12 +10,13 @@ class UserLogin(BaseModel):
 
 class TokenResponse(BaseModel):
     access_token: str
+    
 class IssueBase(BaseModel):
     title: str
     description: str
     status: bool = True
-    label: str = "task"  # 🆕
-    assigned_to: str = "unassigned"  # 🆕
+    label: str = "task"  # default
+    assigned_to: str = "unassigned"  # default
 
 class IssueCreate(IssueBase):
     pass
@@ -25,4 +26,3 @@ class IssueOut(IssueBase):
 
     class Config:
         from_attributes = True
-

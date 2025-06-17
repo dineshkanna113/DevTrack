@@ -3,7 +3,12 @@ import axios from "axios";
 
 export default function Issues() {
   const [issues, setIssues] = useState([]);
-  const [form, setForm] = useState({ title: "", description: "" });
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    label: "task",
+    assigned_to: "unassigned"
+  });
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(false);
 
@@ -36,13 +41,18 @@ export default function Issues() {
     setLoading(true);
 
     try {
-      await axios.post("https://devtrack-backend-758s.onrender.com/issues/", form, {
+      await axios.post("https://devtrack-backend-758s.onrender.com/issues/", {
+        ...form,
+        status: true  // default to open
+      }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setForm({ title: "", description: "" });
+
+      setForm({ title: "", description: "", label: "task", assigned_to: "unassigned" });
       alert("Issue added");
       fetchIssues();
-    } catch {
+    } catch (err) {
+      console.error("Error adding issue:", err);
       alert("Error adding issue");
     } finally {
       setLoading(false);
@@ -66,6 +76,26 @@ export default function Issues() {
           value={form.description}
           onChange={e => setForm({ ...form, description: e.target.value })}
         ></textarea>
+
+        <select
+          value={form.label}
+          onChange={e => setForm({ ...form, label: e.target.value })}
+          style={{ padding: "8px", width: "100%" }}
+        >
+          <option value="task">Task</option>
+          <option value="bug">Bug</option>
+          <option value="feature">Feature</option>
+          <option value="urgent">Urgent</option>
+        </select>
+
+        <input
+          type="email"
+          placeholder="Assign to (email)"
+          value={form.assigned_to}
+          onChange={e => setForm({ ...form, assigned_to: e.target.value })}
+          style={{ padding: "8px", width: "100%" }}
+        />
+
         <button type="submit" disabled={loading}>
           {loading ? "Adding..." : "Add Issue"}
         </button>
@@ -80,12 +110,19 @@ export default function Issues() {
 
       <h3>Issue List</h3>
       {issues
-        .filter(issue => filter === "all" || issue.status === filter)
+        .filter(issue =>
+          filter === "all" ||
+          (filter === "open" && issue.status === true) ||
+          (filter === "closed" && issue.status === false)
+        )
         .map(issue => (
           <div key={issue.id} style={{ border: "1px solid #ccc", padding: "10px", marginTop: "10px" }}>
             <strong>{issue.title}</strong>
             <p>{issue.description}</p>
-            <p>Status: <span style={{ fontWeight: 'bold', color: issue.status === "closed" ? "crimson" : "green" }}>{issue.status.toUpperCase()}</span></p>
+            <p>Label: {issue.label}</p>
+            <p>Assigned to: {issue.assigned_to}</p>
+            <p>Status: <span style={{ fontWeight: 'bold', color: issue.status ? "green" : "crimson" }}>{issue.status ? "OPEN" : "CLOSED"}</span></p>
+
             <button
               style={{ marginRight: "10px", backgroundColor: "#3498db", color: "white", border: "none", padding: "5px" }}
               onClick={async () => {
@@ -96,8 +133,9 @@ export default function Issues() {
                 fetchIssues();
               }}
             >
-              Mark as {issue.status === "open" ? "Closed" : "Open"}
+              Mark as {issue.status ? "Closed" : "Open"}
             </button>
+
             <button
               style={{ backgroundColor: "#e74c3c", color: "white", border: "none", padding: "5px" }}
               onClick={async () => {
