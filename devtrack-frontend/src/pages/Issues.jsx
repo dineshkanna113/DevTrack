@@ -10,7 +10,7 @@ export default function Issues() {
     assigned_to: "unassigned"
   });
   const [filter, setFilter] = useState("all");
-  const [loading, setLoading] = useState(false);
+  //const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
 
@@ -129,7 +129,7 @@ export default function Issues() {
 
       <h3>Issue List</h3>
       {issues
-        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) 
+        
         .filter(issue =>
           filter === "all" ||
           (filter === "open" && issue.status === true) ||
