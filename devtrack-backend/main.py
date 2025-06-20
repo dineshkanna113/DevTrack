@@ -11,7 +11,7 @@ app = FastAPI(title="DevTrack API")
 
 Base.metadata.create_all(bind=engine)
 
-# ✅ PROPER CORS MIDDLEWARE
+#  PROPER CORS MIDDLEWARE
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -24,21 +24,21 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-# ✅ ROUTES
+#  ROUTES
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 app.include_router(issues.router, tags=["Issues"])
 
-# ✅ Root endpoint
+#  Root endpoint
 @app.get("/")
 def root():
     return {"message": "DevTrack backend live"}
 
-# ✅ CORS preflight handler for register
+#  CORS preflight handler for register
 @app.options("/auth/register")
 def options_register():
     return Response(status_code=200)
 
-# ✅ CORS preflight handler for login
+#  CORS preflight handler for login
 @app.options("/auth/login")
 def options_login():
     return Response(status_code=200)
