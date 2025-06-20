@@ -8,10 +8,10 @@ export default function AuthForm({ isLogin }) {
   const [username, setUsername] = useState('');
   const API_URL = "https://devtrack-backend-758s.onrender.com";
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(false);
   const handleSubmit = async e => {
     e.preventDefault();
-
+    
     const endpoint = isLogin ? "/auth/login" : "/auth/register";
 
     const payload = isLogin

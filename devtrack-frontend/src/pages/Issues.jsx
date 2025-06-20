@@ -15,6 +15,7 @@ export default function Issues() {
   const token = localStorage.getItem("token");
 
   const fetchIssues = async () => {
+    setLoading(true);
     try {
       const res = await axios.get("https://devtrack-backend-758s.onrender.com/issues", {
         headers: {
@@ -24,7 +25,9 @@ export default function Issues() {
       setIssues(res.data);
     } catch (err) {
       console.error("Error fetching issues:", err);
-    }
+    } finally {
+    setLoading(false);
+  }
   };
 
   useEffect(() => {
@@ -126,6 +129,7 @@ export default function Issues() {
 
       <h3>Issue List</h3>
       {issues
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) 
         .filter(issue =>
           filter === "all" ||
           (filter === "open" && issue.status === true) ||
