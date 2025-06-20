@@ -9,6 +9,7 @@ load_dotenv()
 
 app = FastAPI(title="DevTrack API")
 
+Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 #  PROPER CORS MIDDLEWARE
@@ -17,7 +18,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "https://devtrack-frontend-sigma.vercel.app",
-        "https://devtrack-frontend-wine.vercel.app"
+        "https://devtrack-frontend-cqw0lvls2-dinesh-kannas-projects.vercel.app/"
     ],
     allow_credentials=True,
     allow_methods=["*"],
