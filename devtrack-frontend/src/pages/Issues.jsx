@@ -41,20 +41,28 @@ export default function Issues() {
 
   setLoading(true);
 
-  // ✅ Step 5: Debug - See what you're sending
-  console.log("Submitting issue:", {
-    ...form,
-    status: true
-  });
+  // Step 5: Debug - See what you're sending
+  console.log("Submitting:", {
+  title: form.title,
+  description: form.description,
+  label: "task",
+  assigned_to: "unassigned",
+  status: "open"
+});
 
   try {
-    await axios.post("https://devtrack-backend-758s.onrender.com/issues/", {
-      ...form,
-      status: true
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
+    await axios.post("https://devtrack-backend-758s.onrender.com/issues", {
+  title: form.title,
+  description: form.description,
+  label: "task", // or form.label if dynamic
+  assigned_to: "unassigned", // or form.assigned_to
+  status: "open"
+}, {
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  }
+});
     setForm({ title: "", description: "", label: "task", assigned_to: "unassigned" });
     alert("Issue added");
     fetchIssues();
