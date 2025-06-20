@@ -9,7 +9,7 @@ load_dotenv()
 
 app = FastAPI(title="DevTrack API")
 
-Base.metadata.drop_all(bind=engine)
+
 Base.metadata.create_all(bind=engine)
 
 #  PROPER CORS MIDDLEWARE
