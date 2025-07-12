@@ -14,6 +14,7 @@ export default function Issues() {
   const [page, setPage] = useState(1);
   const [limit] = useState(5);
   const [hasMore, setHasMore] = useState(true); // optional for disabling "Next"
+  const [totalPages, setTotalPages] = useState(1);
 
   const token = localStorage.getItem("token");
 
@@ -25,7 +26,8 @@ export default function Issues() {
           Authorization: `Bearer ${token}`,
         },
       });
-      setIssues(res.data);
+      setIssues(res.data.Issues);
+      setTotalPages(Math.ceil(res.data.total / limit));
       setHasMore(res.data.length === limit);
     } catch (err) {
   console.error("Error adding issue:", err);
@@ -167,21 +169,24 @@ export default function Issues() {
         ))}
 
       {/* Pagination */}
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
-        <button
-          onClick={() => setPage(prev => Math.max(prev - 1, 1))}
-          disabled={page === 1}
-        >
-          Previous
-        </button>
-        <span>Page {page}</span>
-        <button
-          onClick={() => setPage(prev => prev + 1)}
-          disabled={!hasMore}
-        >
-          Next
-        </button>
-      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+  <button
+    disabled={page <= 1}
+    onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+  >
+    Previous
+  </button>
+
+  <span>Page {page} of {totalPages}</span>
+
+  <button
+    disabled={page >= totalPages}
+    onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
+  >
+    Next
+  </button>
+</div>
+
     </div>
   );
 }
