@@ -13,7 +13,7 @@ export default function Issues() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [limit] = useState(5);
-  const [hasMore, setHasMore] = useState(true); // optional for disabling "Next"
+  //const [hasMore, setHasMore] = useState(true); // optional for disabling "Next"
   const [totalPages, setTotalPages] = useState(1);
 
   const token = localStorage.getItem("token");
@@ -28,7 +28,7 @@ export default function Issues() {
       });
       setIssues(res.data.Issues);
       setTotalPages(Math.ceil(res.data.total / limit));
-      setHasMore(res.data.length === limit);
+      //setHasMore(res.data.length === limit);
     } catch (err) {
   console.error("Error adding issue:", err);
   if (err.response) {
