@@ -49,9 +49,17 @@ def get_issues(
     })
 
 
-@router.post("/", response_model=IssueOut)
-def create_issue(issue: IssueCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    print(f"User creating issue: {current_user.email}")
+@router.post("/issues", response_model=IssueOut)
+def create_issue(
+    issue: IssueCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    new_issue = Issue(**issue.dict(), owner_id=current_user.id)
+    db.add(new_issue)
+    db.commit()
+    db.refresh(new_issue)
+    return new_issue
 
 
 @router.delete("/issues/{issue_id}")
