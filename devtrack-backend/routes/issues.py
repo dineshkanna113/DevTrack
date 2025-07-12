@@ -3,11 +3,9 @@ from sqlalchemy.orm import Session
 from models import Issue, User
 from database import SessionLocal
 from schemas import IssueCreate, IssueOut
-from typing import List, Optional
+from typing import Optional
 from routes.auth import get_current_user
 from fastapi.responses import JSONResponse
-from schemas import IssueOut
-
 
 router = APIRouter()
 
@@ -22,17 +20,16 @@ def get_db():
 def get_issues(
     page: int = 1,
     limit: int = 5,
-    status: Optional[bool] = None,
+    status: Optional[str] = None,
     label: Optional[str] = None,
     assigned_to: Optional[str] = None,
     db: Session = Depends(get_db),
-    token_data: dict = Depends(get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
-    print("User email:", token_data["email"])
     offset = (page - 1) * limit
     query = db.query(Issue)
 
-    if status is not None:
+    if status:
         query = query.filter(Issue.status == status)
     if label:
         query = query.filter(Issue.label == label)
@@ -48,8 +45,6 @@ def get_issues(
         "total_pages": total_pages
     })
 
-
-
 @router.post("/issues", response_model=IssueOut)
 def create_issue(
     issue: IssueCreate,
@@ -62,7 +57,6 @@ def create_issue(
     db.refresh(new_issue)
     return new_issue
 
-
 @router.delete("/issues/{issue_id}")
 def delete_issue(issue_id: int, db: Session = Depends(get_db)):
     issue = db.query(Issue).filter(Issue.id == issue_id).first()
@@ -72,16 +66,11 @@ def delete_issue(issue_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Issue deleted"}
 
-
 @router.patch("/issues/{issue_id}/close")
 def close_issue(issue_id: int, db: Session = Depends(get_db)):
     issue = db.query(Issue).filter(Issue.id == issue_id).first()
     if not issue:
         raise HTTPException(status_code=404, detail="Issue not found")
-    
-    issue.status = not issue.status
+    issue.status = "closed" if issue.status == "open" else "open"
     db.commit()
-    db.refresh(issue)
-    return {"message": f"Issue marked as {'closed' if not issue.status else 'open'}", "status": issue.status}
-
-
+    return {"message": f"Issue status changed to {issue.status}"}
