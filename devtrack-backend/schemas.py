@@ -14,7 +14,7 @@ class TokenResponse(BaseModel):
 class IssueBase(BaseModel):
     title: str
     description: str
-    status: str = open
+    status: bool = True
     label: str = "task"  # default
     assigned_to: str = ""  # default
 

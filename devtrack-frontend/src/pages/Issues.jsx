@@ -12,6 +12,7 @@ export default function Issues() {
   const token = localStorage.getItem("token");
 
   const fetchIssues = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(`https://devtrack-backend-758s.onrender.com/issues?page=${page}`, {
         headers: {
@@ -22,7 +23,9 @@ export default function Issues() {
       setTotalPages(res.data.total_pages);
     } catch (err) {
       console.error("Error fetching issues:", err);
-    }
+    }finally {
+    setLoading(false);
+  }
   };
 
   useEffect(() => {
@@ -44,6 +47,7 @@ export default function Issues() {
       });
       setForm({ title: "", description: "", label: "task", assigned_to: "" });
       alert("Issue added");
+      setPage(1);
       fetchIssues();
     } catch (err) {
       console.error("Error adding issue:", err);
@@ -147,15 +151,18 @@ export default function Issues() {
           </div>
         ))}
 
-      <div style={{ marginTop: "20px" }}>
-        <button onClick={() => setPage(page - 1)} disabled={page === 1}>
-          Previous
-        </button>
-        <span style={{ margin: "0 10px" }}>Page {page} of {totalPages}</span>
-        <button onClick={() => setPage(page + 1)} disabled={page === totalPages}>
-          Next
-        </button>
-      </div>
+      <div style={{ marginTop: "20px", textAlign: "center" }}>
+  <button onClick={() => setPage(page - 1)} disabled={page === 1}>
+    ⬅ Prev
+  </button>
+  <span style={{ margin: "0 10px" }}>
+    Page <strong>{page}</strong> of {totalPages}
+  </span>
+  <button onClick={() => setPage(page + 1)} disabled={page === totalPages}>
+    Next ➡
+  </button>
+</div>
+
     </div>
   );
 }

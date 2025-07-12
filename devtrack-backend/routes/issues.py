@@ -26,7 +26,7 @@ def get_issues(
     label: Optional[str] = None,
     assigned_to: Optional[str] = None,
     db: Session = Depends(get_db),
-    token_data: dict = Depends(get_current_user)  # ✅ this gives access to email
+    token_data: dict = Depends(get_current_user)
 ):
     print("User email:", token_data["email"])
     offset = (page - 1) * limit
@@ -40,13 +40,14 @@ def get_issues(
         query = query.filter(Issue.assigned_to == assigned_to)
 
     total = query.count()
+    total_pages = (total + limit - 1) // limit
     issues = query.offset(offset).limit(limit).all()
 
-    # Use Pydantic v2 model_validate with from_attributes=True
     return JSONResponse(content={
-        "Issues": [IssueOut.model_validate(issue) for issue in issues],
-        "total": total
+        "items": [IssueOut.model_validate(issue) for issue in issues],
+        "total_pages": total_pages
     })
+
 
 
 @router.post("/issues", response_model=IssueOut)
@@ -70,14 +71,17 @@ def delete_issue(issue_id: int, db: Session = Depends(get_db)):
     db.delete(issue)
     db.commit()
     return {"message": "Issue deleted"}
+
+
 @router.patch("/issues/{issue_id}/close")
 def close_issue(issue_id: int, db: Session = Depends(get_db)):
     issue = db.query(Issue).filter(Issue.id == issue_id).first()
     if not issue:
         raise HTTPException(status_code=404, detail="Issue not found")
     
-    issue.status = "closed" if issue.status == "open" else "open"
+    issue.status = not issue.status
     db.commit()
     db.refresh(issue)
-    return {"message": f"Issue marked as {issue.status}", "status": issue.status}
+    return {"message": f"Issue marked as {'closed' if not issue.status else 'open'}", "status": issue.status}
+
 
