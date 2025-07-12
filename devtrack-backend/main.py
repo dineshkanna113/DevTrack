@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from database import Base, engine
 from routes import auth, issues
 from dotenv import load_dotenv
-from routes import debug
+
 import os
 
 # Load environment variables from .env in local dev
@@ -30,7 +30,7 @@ app.add_middleware(
 # ✅ Include authentication and issue routes
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 app.include_router(issues.router, tags=["Issues"])
-app.include_router(debug.router)
+
 # ✅ Test root route to confirm backend is alive
 @app.get("/")
 def root():
