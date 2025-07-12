@@ -4,7 +4,7 @@ from models import Issue, User
 from database import SessionLocal
 from schemas import IssueCreate, IssueOut
 from typing import List, Optional
-from auth import get_current_user
+from routes.auth import get_current_user
 from fastapi.responses import JSONResponse
 from schemas import IssueOut
 
