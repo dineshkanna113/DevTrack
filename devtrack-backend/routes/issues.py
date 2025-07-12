@@ -48,6 +48,12 @@ def get_issues(
         "total": total
     })
 
+
+@router.post("/", response_model=IssueOut)
+def create_issue(issue: IssueCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    print(f"User creating issue: {current_user.email}")
+
+
 @router.delete("/issues/{issue_id}")
 def delete_issue(issue_id: int, db: Session = Depends(get_db)):
     issue = db.query(Issue).filter(Issue.id == issue_id).first()

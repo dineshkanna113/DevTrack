@@ -3,41 +3,26 @@ import axios from "axios";
 
 export default function Issues() {
   const [issues, setIssues] = useState([]);
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    label: "task",
-    assigned_to: "unassigned"
-  });
+  const [form, setForm] = useState({ title: "", description: "", label: "task", assigned_to: "" });
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [limit] = useState(5);
-  //const [hasMore, setHasMore] = useState(true); // optional for disabling "Next"
   const [totalPages, setTotalPages] = useState(1);
 
   const token = localStorage.getItem("token");
 
   const fetchIssues = async () => {
-    setLoading(true);
     try {
-      const res = await axios.get(`https://devtrack-backend-758s.onrender.com/issues?page=${page}&limit=${limit}`, {
+      const res = await axios.get(`https://devtrack-backend-758s.onrender.com/issues?page=${page}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setIssues(res.data.Issues);
-      setTotalPages(Math.ceil(res.data.total / limit));
-      //setHasMore(res.data.length === limit);
+      setIssues(res.data.items);
+      setTotalPages(res.data.total_pages);
     } catch (err) {
-  console.error("Error adding issue:", err);
-  if (err.response) {
-    console.error("Server responded with:", err.response.status, err.response.data);
-    alert("Backend Error: " + JSON.stringify(err.response.data));
-  } else {
-    alert("Network Error: " + err.message);
-  }
-}
+      console.error("Error fetching issues:", err);
+    }
   };
 
   useEffect(() => {
@@ -52,20 +37,12 @@ export default function Issues() {
     }
 
     setLoading(true);
+
     try {
-      await axios.post("https://devtrack-backend-758s.onrender.com/issues", {
-        title: form.title,
-        description: form.description,
-        label: form.label,
-        assigned_to: form.assigned_to,
-        // status: "open"
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
+      await axios.post("https://devtrack-backend-758s.onrender.com/issues", form, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      setForm({ title: "", description: "", label: "task", assigned_to: "unassigned" });
+      setForm({ title: "", description: "", label: "task", assigned_to: "" });
       alert("Issue added");
       fetchIssues();
     } catch (err) {
@@ -80,7 +57,6 @@ export default function Issues() {
     <div style={{ maxWidth: "800px", margin: "auto", padding: "1rem" }}>
       <h2>DevTrack – Issues</h2>
 
-      {/* Form */}
       <form onSubmit={handleSubmit}>
         <input
           style={{ width: "100%", padding: "8px" }}
@@ -94,6 +70,7 @@ export default function Issues() {
           value={form.description}
           onChange={e => setForm({ ...form, description: e.target.value })}
         ></textarea>
+
         <select
           value={form.label}
           onChange={e => setForm({ ...form, label: e.target.value })}
@@ -104,6 +81,7 @@ export default function Issues() {
           <option value="feature">Feature</option>
           <option value="urgent">Urgent</option>
         </select>
+
         <input
           type="email"
           placeholder="Assign to (email)"
@@ -111,12 +89,12 @@ export default function Issues() {
           onChange={e => setForm({ ...form, assigned_to: e.target.value })}
           style={{ padding: "8px", width: "100%" }}
         />
+
         <button type="submit" disabled={loading}>
           {loading ? "Adding..." : "Add Issue"}
         </button>
       </form>
 
-      {/* Filter */}
       <h3>Filter by Status</h3>
       <select onChange={e => setFilter(e.target.value)} value={filter}>
         <option value="all">All</option>
@@ -124,9 +102,8 @@ export default function Issues() {
         <option value="closed">Closed</option>
       </select>
 
-      {/* Issues */}
       <h3>Issue List</h3>
-      {issues
+      {Array.isArray(issues) && issues
         .filter(issue =>
           filter === "all" ||
           (filter === "open" && issue.status === true) ||
@@ -139,6 +116,7 @@ export default function Issues() {
             <p>Label: {issue.label}</p>
             <p>Assigned to: {issue.assigned_to}</p>
             <p>Status: <span style={{ fontWeight: 'bold', color: issue.status ? "green" : "crimson" }}>{issue.status ? "OPEN" : "CLOSED"}</span></p>
+
             <button
               style={{ marginRight: "10px", backgroundColor: "#3498db", color: "white", border: "none", padding: "5px" }}
               onClick={async () => {
@@ -151,6 +129,7 @@ export default function Issues() {
             >
               Mark as {issue.status ? "Closed" : "Open"}
             </button>
+
             <button
               style={{ backgroundColor: "#e74c3c", color: "white", border: "none", padding: "5px" }}
               onClick={async () => {
@@ -161,32 +140,22 @@ export default function Issues() {
                   alert("Issue deleted");
                   fetchIssues();
                 }
-              }}
+              }} 
             >
               Delete
             </button>
           </div>
         ))}
 
-      {/* Pagination */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-  <button
-    disabled={page <= 1}
-    onClick={() => setPage(prev => Math.max(prev - 1, 1))}
-  >
-    Previous
-  </button>
-
-  <span>Page {page} of {totalPages}</span>
-
-  <button
-    disabled={page >= totalPages}
-    onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
-  >
-    Next
-  </button>
-</div>
-
+      <div style={{ marginTop: "20px" }}>
+        <button onClick={() => setPage(page - 1)} disabled={page === 1}>
+          Previous
+        </button>
+        <span style={{ margin: "0 10px" }}>Page {page} of {totalPages}</span>
+        <button onClick={() => setPage(page + 1)} disabled={page === totalPages}>
+          Next
+        </button>
+      </div>
     </div>
   );
 }
