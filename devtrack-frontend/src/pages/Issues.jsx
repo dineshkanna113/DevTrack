@@ -10,7 +10,7 @@ export default function Issues() {
     assigned_to: "unassigned"
   });
   const [filter, setFilter] = useState("all");
-  //const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
 
