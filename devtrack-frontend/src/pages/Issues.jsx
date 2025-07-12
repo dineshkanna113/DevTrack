@@ -28,10 +28,14 @@ export default function Issues() {
       setIssues(res.data);
       setHasMore(res.data.length === limit);
     } catch (err) {
-      console.error("Error fetching issues:", err);
-    } finally {
-      setLoading(false);
-    }
+  console.error("Error adding issue:", err);
+  if (err.response) {
+    console.error("Server responded with:", err.response.status, err.response.data);
+    alert("Backend Error: " + JSON.stringify(err.response.data));
+  } else {
+    alert("Network Error: " + err.message);
+  }
+}
   };
 
   useEffect(() => {
@@ -52,7 +56,7 @@ export default function Issues() {
         description: form.description,
         label: form.label,
         assigned_to: form.assigned_to,
-        status: "open"
+        // status: "open"
       }, {
         headers: {
           Authorization: `Bearer ${token}`,
