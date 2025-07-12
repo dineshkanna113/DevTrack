@@ -1,4 +1,4 @@
-fastapi==0.110.0
+fastapi==0.109.2
 uvicorn==0.23.2
 
 SQLAlchemy==2.0.41
@@ -11,8 +11,8 @@ bcrypt==3.2.2
 python-dotenv==1.0.0
 email-validator==2.1.0.post1
 
-anyio==4.2.0
 pydantic==2.5.3
+pydantic-core==2.14.5  # ✅ latest compatible prebuilt wheel
 typing_extensions==4.13.1
-
+anyio==4.2.0
 requests==2.31.0
