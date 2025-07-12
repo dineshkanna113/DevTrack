@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean
 from database import Base
 
 class User(Base):
@@ -7,14 +7,12 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
     password = Column(String)
-
+    
 class Issue(Base):
     __tablename__ = "issues"
-
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
     description = Column(String)
-    status = Column(String, default="open")
-    label = Column(String, default="task")
-    assigned_to = Column(String, default="unassigned")
-    owner_id = Column(Integer, ForeignKey("users.id"))  # ✅ Required
+    status = Column(String, default="open")  # True = open, False = closed
+    label = Column(String, default="task")  # 🆕 bug, feature, urgent, etc
+    assigned_to = Column(String, default="unassigned")  # 🆕 user email
