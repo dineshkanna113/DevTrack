@@ -14,13 +14,14 @@ class TokenResponse(BaseModel):
 class IssueBase(BaseModel):
     title: str
     description: str
-    status: str = "open"  # ✅ fix here
-    label: str = "task"
-    assigned_to: str = ""
+    status: str = "open"           # "open" or "closed"
+    label: str = "task"            # e.g., bug, feature, task
+    assigned_to: str = "unassigned"
 
 class IssueCreate(IssueBase):
     pass
 
 class IssueOut(IssueBase):
     id: int
+    owner_id: int                  # Include the user who created it
     model_config = ConfigDict(from_attributes=True)

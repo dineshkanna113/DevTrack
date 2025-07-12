@@ -5,14 +5,17 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    password = Column(String)
-    
+    email = Column(String, unique=True, index=True, nullable=False)
+    password = Column(String, nullable=False)
+
+
 class Issue(Base):
     __tablename__ = "issues"
+
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
-    description = Column(String)
-    status = Column(String, default="open")  # True = open, False = closed
-    label = Column(String, default="task")  # 🆕 bug, feature, urgent, etc
-    assigned_to = Column(String, default="unassigned")  # 🆕 user email
+    description = Column(String, nullable=True)
+    status = Column(String, default="open", nullable=False)  # "open" or "closed"
+    label = Column(String, default="task", nullable=False)   # e.g., bug, feature
+    assigned_to = Column(String, default="unassigned", nullable=False)
+    owner_id = Column(Integer, nullable=False)  # 👤 user who created it

@@ -3,15 +3,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from database import Base, engine
 from routes import auth, issues
 from dotenv import load_dotenv
+import os
 
+# Load environment variables from .env in local dev
 load_dotenv()
 
 app = FastAPI(title="DevTrack API")
 
-# Create database tables
+# Create all database tables
 Base.metadata.create_all(bind=engine)
 
-# Enable CORS for frontend deployment and local dev
+# ✅ Allow CORS for Vercel frontend & local dev
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -24,11 +26,11 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-# Include route files
+# ✅ Include authentication and issue routes
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 app.include_router(issues.router, tags=["Issues"])
 
-# Root endpoint to verify deployment
+# ✅ Test root route to confirm backend is alive
 @app.get("/")
 def root():
     return {"message": "DevTrack backend live"}

@@ -23,9 +23,9 @@ export default function Issues() {
       setTotalPages(res.data.total_pages);
     } catch (err) {
       console.error("Error fetching issues:", err);
-    }finally {
-    setLoading(false);
-  }
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -46,7 +46,6 @@ export default function Issues() {
         headers: { Authorization: `Bearer ${token}` }
       });
       setForm({ title: "", description: "", label: "task", assigned_to: "" });
-      localStorage.setItem("token", res.data.access_token);
       alert("Issue added");
       setPage(1);
       fetchIssues();
@@ -111,8 +110,8 @@ export default function Issues() {
       {Array.isArray(issues) && issues
         .filter(issue =>
           filter === "all" ||
-          (filter === "open" && issue.status === true) ||
-          (filter === "closed" && issue.status === false)
+          (filter === "open" && issue.status === "open") ||
+          (filter === "closed" && issue.status === "closed")
         )
         .map(issue => (
           <div key={issue.id} style={{ border: "1px solid #ccc", padding: "10px", marginTop: "10px" }}>
@@ -120,7 +119,7 @@ export default function Issues() {
             <p>{issue.description}</p>
             <p>Label: {issue.label}</p>
             <p>Assigned to: {issue.assigned_to}</p>
-            <p>Status: <span style={{ fontWeight: 'bold', color: issue.status ? "green" : "crimson" }}>{issue.status ? "OPEN" : "CLOSED"}</span></p>
+            <p>Status: <span style={{ fontWeight: 'bold', color: issue.status === "open" ? "green" : "crimson" }}>{issue.status.toUpperCase()}</span></p>
 
             <button
               style={{ marginRight: "10px", backgroundColor: "#3498db", color: "white", border: "none", padding: "5px" }}
@@ -132,7 +131,7 @@ export default function Issues() {
                 fetchIssues();
               }}
             >
-              Mark as {issue.status ? "Closed" : "Open"}
+              Mark as {issue.status === "open" ? "Closed" : "Open"}
             </button>
 
             <button
@@ -153,17 +152,16 @@ export default function Issues() {
         ))}
 
       <div style={{ marginTop: "20px", textAlign: "center" }}>
-  <button onClick={() => setPage(page - 1)} disabled={page === 1}>
-    ⬅ Prev
-  </button>
-  <span style={{ margin: "0 10px" }}>
-    Page <strong>{page}</strong> of {totalPages}
-  </span>
-  <button onClick={() => setPage(page + 1)} disabled={page === totalPages}>
-    Next ➡
-  </button>
-</div>
-
+        <button onClick={() => setPage(page - 1)} disabled={page === 1}>
+          ⬅ Prev
+        </button>
+        <span style={{ margin: "0 10px" }}>
+          Page <strong>{page}</strong> of {totalPages}
+        </span>
+        <button onClick={() => setPage(page + 1)} disabled={page === totalPages}>
+          Next ➡
+        </button>
+      </div>
     </div>
   );
 }
