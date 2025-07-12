@@ -5,6 +5,10 @@ from database import SessionLocal
 from schemas import IssueCreate, IssueOut
 from typing import List, Optional
 from auth import get_current_user
+from fastapi.responses import JSONResponse
+from schemas import IssueOut
+
+
 router = APIRouter()
 
 def get_db():
@@ -14,15 +18,7 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/issues", response_model=IssueOut)
-def create_issue(issue: IssueCreate, db: Session = Depends(get_db)):
-    new_issue = Issue(**issue.dict())
-    db.add(new_issue)
-    db.commit()
-    db.refresh(new_issue)
-    return new_issue
-
-@router.get("/issues", response_model=List[IssueOut])
+@router.get("/issues")
 def get_issues(
     page: int = 1,
     limit: int = 5,
@@ -30,8 +26,9 @@ def get_issues(
     label: Optional[str] = None,
     assigned_to: Optional[str] = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    token_data: dict = Depends(get_current_user)  # ✅ this gives access to email
 ):
+    print("User email:", token_data["email"])
     offset = (page - 1) * limit
     query = db.query(Issue)
 
@@ -42,10 +39,14 @@ def get_issues(
     if assigned_to:
         query = query.filter(Issue.assigned_to == assigned_to)
 
+    total = query.count()
     issues = query.offset(offset).limit(limit).all()
-    return issues
 
-
+    # Use Pydantic v2 model_validate with from_attributes=True
+    return JSONResponse(content={
+        "Issues": [IssueOut.model_validate(issue) for issue in issues],
+        "total": total
+    })
 
 @router.delete("/issues/{issue_id}")
 def delete_issue(issue_id: int, db: Session = Depends(get_db)):
