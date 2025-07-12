@@ -50,30 +50,35 @@ def get_issues(
 
 # ✅ POST create new issue
 @router.post("/issues", response_model=IssueOut)
-def create_issue(
-    issue: IssueCreate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    new_issue = Issue(**issue.dict(), owner_id=current_user.id)
+def create_issue(issue: IssueCreate, db: Session = Depends(get_db), current_user: int = Depends(get_current_user)):
+    new_issue = Issue(
+        title=issue.title,
+        description=issue.description,
+        status="open",
+        label=issue.label,
+        assigned_to=issue.assigned_to,
+        # Temporarily omit or hardcode this:
+        # owner_id=current_user.id  
+    )
     db.add(new_issue)
     db.commit()
     db.refresh(new_issue)
     return new_issue
 
 # ✅ DELETE an issue
-@router.delete("/issues/{issue_id}")
-def delete_issue(
-    issue_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    issue = db.query(Issue).filter(Issue.id == issue_id).first()
-    if not issue:
-        raise HTTPException(status_code=404, detail="Issue not found")
-    db.delete(issue)
+@router.post("/issues", response_model=IssueOut)
+def create_issue(issue: IssueCreate, db: Session = Depends(get_db)):
+    new_issue = Issue(
+        title=issue.title,
+        description=issue.description,
+        status="open",
+        label=issue.label,
+        assigned_to=issue.assigned_to
+    )
+    db.add(new_issue)
     db.commit()
-    return {"message": "Issue deleted"}
+    db.refresh(new_issue)
+    return new_issue
 
 # ✅ PATCH: toggle issue open/closed
 @router.patch("/issues/{issue_id}/close")
