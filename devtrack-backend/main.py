@@ -9,37 +9,26 @@ load_dotenv()
 
 app = FastAPI(title="DevTrack API")
 
-
 Base.metadata.create_all(bind=engine)
 
-#  PROPER CORS MIDDLEWARE
+# ✅ PROPER CORS MIDDLEWARE SETUP
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
         "https://devtrack-frontend-sigma.vercel.app",
-        "https://devtrack-frontend-cqw0lvls2-dinesh-kannas-projects.vercel.app/"
+        "https://devtrack-frontend-cqw0lvls2-dinesh-kannas-projects.vercel.app"  # no trailing slash
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
 )
 
-#  ROUTES
+# ✅ ROUTES
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 app.include_router(issues.router, tags=["Issues"])
 
-#  Root endpoint
+# ✅ Root test endpoint
 @app.get("/")
 def root():
     return {"message": "DevTrack backend live"}
-
-#  CORS preflight handler for register
-@app.options("/auth/register")
-def options_register():
-    return Response(status_code=200)
-
-#  CORS preflight handler for login
-@app.options("/auth/login")
-def options_login():
-    return Response(status_code=200)
