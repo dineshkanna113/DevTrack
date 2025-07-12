@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from models import Issue
+from models import Issue, User
 from database import SessionLocal
 from schemas import IssueCreate, IssueOut
 from typing import List, Optional
-
+from auth import get_current_user
 router = APIRouter()
 
 def get_db():
@@ -24,11 +24,15 @@ def create_issue(issue: IssueCreate, db: Session = Depends(get_db)):
 
 @router.get("/issues", response_model=List[IssueOut])
 def get_issues(
+    page: int = 1,
+    limit: int = 5,
     status: Optional[bool] = None,
     label: Optional[str] = None,
     assigned_to: Optional[str] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
+    offset = (page - 1) * limit
     query = db.query(Issue)
 
     if status is not None:
@@ -38,7 +42,9 @@ def get_issues(
     if assigned_to:
         query = query.filter(Issue.assigned_to == assigned_to)
 
-    return query.all()
+    issues = query.offset(offset).limit(limit).all()
+    return issues
+
 
 
 @router.delete("/issues/{issue_id}")
@@ -59,3 +65,4 @@ def close_issue(issue_id: int, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(issue)
     return {"message": f"Issue marked as {issue.status}", "status": issue.status}
+
