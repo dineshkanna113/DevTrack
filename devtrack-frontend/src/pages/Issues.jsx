@@ -46,6 +46,7 @@ export default function Issues() {
         headers: { Authorization: `Bearer ${token}` }
       });
       setForm({ title: "", description: "", label: "task", assigned_to: "" });
+      localStorage.setItem("token", res.data.access_token);
       alert("Issue added");
       setPage(1);
       fetchIssues();
