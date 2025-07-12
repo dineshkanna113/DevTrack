@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr,ConfigDict
+from pydantic import BaseModel, EmailStr, ConfigDict
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -10,13 +10,13 @@ class UserLogin(BaseModel):
 
 class TokenResponse(BaseModel):
     access_token: str
-    
+
 class IssueBase(BaseModel):
     title: str
     description: str
-    status: str = "open"
-    label: str = "task"  # default
-    assigned_to: str = ""  # default
+    status: str = "open"  # ✅ fix here
+    label: str = "task"
+    assigned_to: str = ""
 
 class IssueCreate(IssueBase):
     pass
