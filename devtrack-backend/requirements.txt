@@ -1,28 +1,19 @@
-# ✅ FastAPI core
-fastapi==0.115.1
+fastapi==0.110.0
 uvicorn==0.23.2
-starlette==0.38.2
+starlette==0.37.2
 
-# ✅ DB and ORM
 SQLAlchemy==2.0.41
-psycopg2-binary==2.9.9  # PostgreSQL driver
+psycopg2-binary==2.9.9
 
-# ✅ Security and JWT
 python-jose==3.3.0
 passlib[bcrypt]==1.7.4
 bcrypt==3.2.2
 
-# ✅ Environment management
 python-dotenv==1.0.0
-
-# ✅ Email validation for user signup
 email-validator==2.1.0.post1
 
-# ✅ Async and support libs
 anyio==4.2.0
+pydantic==2.5.3
 typing_extensions==4.13.1
-pydantic==2.6.4
 
-# ✅ CORS support
 requests==2.31.0
-
