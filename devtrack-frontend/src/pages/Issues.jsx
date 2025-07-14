@@ -68,7 +68,7 @@ export default function Issues() {
   };
 
   return (
-    <div style={{ maxWidth: "900px", margin: "auto", padding: "1.5rem", fontFamily: "Segoe UI, sans-serif", color: "#ecf0f1" }}>
+    <div style={{ maxWidth: "950px", margin: "auto", padding: "1.5rem", fontFamily: "Segoe UI, sans-serif", color: "#ecf0f1" }}>
       <h1 style={{ textAlign: "center", color: "#2ecc71" }}>🐛 DevTrack – Issues</h1>
 
       {/* Form */}
