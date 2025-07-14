@@ -90,3 +90,7 @@ def add_owner_column(db: Session = Depends(get_db)):
         return {"message": "✅ Column 'owner_id' added to issues table."}
     except Exception as e:
         return {"error": str(e)}
+@router.get("/admin/check-columns")
+def check_columns(db: Session = Depends(get_db)):
+    result = db.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='issues';"))
+    return {"columns": [row[0] for row in result]}
