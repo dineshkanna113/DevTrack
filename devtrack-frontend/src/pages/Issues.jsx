@@ -81,7 +81,8 @@ export default function Issues() {
       margin: "2rem auto",
       padding: "2rem",
       fontFamily: "Segoe UI, sans-serif",
-      color: "#ecf0f1"
+      color: "#ecf0f1",
+      boxSizing: "border-box"
     }}>
       <h1 style={{ textAlign: "center", color: "#2ecc71" }}>🐛 DevTrack – Issues</h1>
 

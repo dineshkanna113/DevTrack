@@ -41,7 +41,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ maxWidth: "600px", margin: "auto", textAlign: "center", padding: "2rem" }}>
+    <div style={{ maxWidth: "900px", margin: "auto", textAlign: "center", padding: "2rem" }}>
       <h1>🚀 Welcome to DevTrack</h1>
       <h2>👤 Logged in as: <span style={{ color: "#3498db" }}>{email}</span></h2>
 
