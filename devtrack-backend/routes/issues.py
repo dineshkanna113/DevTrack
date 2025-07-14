@@ -101,19 +101,15 @@ def check_columns(db: Session = Depends(get_db)):
     result = db.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='issues';"))
     return {"columns": [row[0] for row in result]}
 
-@router.delete("/issues/{issue_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_issue(
-    issue_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
+@router.delete("/issues/{issue_id}")
+def delete_issue(issue_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     issue = db.query(Issue).filter(Issue.id == issue_id).first()
     if not issue:
         raise HTTPException(status_code=404, detail="Issue not found")
-
+    
     if issue.owner_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to delete this issue")
 
     db.delete(issue)
     db.commit()
-    return
+    return {"message": "Issue deleted"}
