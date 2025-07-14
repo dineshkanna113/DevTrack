@@ -31,7 +31,7 @@ def get_issues(
     current_user: User = Depends(get_current_user)
 ):
     offset = (page - 1) * limit
-    query = db.query(Issue)
+    query = db.query(Issue).filter(Issue.owner_id == current_user.id)
 
     if status in {"open", "closed"}:
         query = query.filter(Issue.status == status)
@@ -77,7 +77,7 @@ def toggle_issue_status(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    issue = db.query(Issue).filter(Issue.id == issue_id).first()
+    issue = db.query(Issue).filter(Issue.id == issue_id, Issue.owner_id == current_user.id).first()
     if not issue:
         raise HTTPException(status_code=404, detail="Issue not found")
     issue.status = "closed" if issue.status == "open" else "open"
@@ -103,7 +103,7 @@ def check_columns(db: Session = Depends(get_db)):
 
 @router.delete("/issues/{issue_id}")
 def delete_issue(issue_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    issue = db.query(Issue).filter(Issue.id == issue_id).first()
+    issue = issue = db.query(Issue).filter(Issue.id == issue_id, Issue.owner_id == current_user.id).first()
     if not issue:
         raise HTTPException(status_code=404, detail="Issue not found")
     
@@ -113,6 +113,8 @@ def delete_issue(issue_id: int, db: Session = Depends(get_db), current_user: Use
     db.delete(issue)
     db.commit()
     return {"message": "Issue deleted"}
+
+
 @router.get("/admin/fix-null-owners")
 def assign_missing_owners(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     # Only allow for a known admin email (e.g., your own)
@@ -122,3 +124,10 @@ def assign_missing_owners(db: Session = Depends(get_db), current_user: User = De
     updated = db.query(Issue).filter(Issue.owner_id == None).update({Issue.owner_id: current_user.id})
     db.commit()
     return {"updated": updated}
+
+@router.get("/users/issues", response_model=List[IssueOut])
+def get_user_issues(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return db.query(Issue).filter(Issue.owner_id == current_user.id).all()
