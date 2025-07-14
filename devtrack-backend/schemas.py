@@ -23,5 +23,5 @@ class IssueCreate(IssueBase):
 
 class IssueOut(IssueBase):
     id: int
-    owner_id: int                  # Include the user who created it
+    owner_id: Optional[int]                 # Include the user who created it
     model_config = ConfigDict(from_attributes=True)
