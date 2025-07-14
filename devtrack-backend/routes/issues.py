@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from models import Issue, User
@@ -100,6 +100,7 @@ def add_owner_column(db: Session = Depends(get_db)):
 def check_columns(db: Session = Depends(get_db)):
     result = db.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='issues';"))
     return {"columns": [row[0] for row in result]}
+
 @router.delete("/issues/{issue_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_issue(
     issue_id: int,
@@ -110,7 +111,6 @@ def delete_issue(
     if not issue:
         raise HTTPException(status_code=404, detail="Issue not found")
 
-    # Optional: only allow deleting own issues
     if issue.owner_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to delete this issue")
 
