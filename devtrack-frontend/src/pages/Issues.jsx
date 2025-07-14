@@ -9,11 +9,10 @@ export default function Issues() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const token = localStorage.getItem("token");
-  if (!token || token === "null") {
-  console.warn("Missing or invalid token");
-  // Optionally redirect to login page
-  return;
+  localStorage.setItem("token", response.data.access_token);
+  if (!token) {
+  alert("Please login again.");
+  window.location.href = "/login"; // or your login route
 }
 
   const fetchIssues = async () => {
