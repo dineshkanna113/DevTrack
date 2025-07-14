@@ -85,11 +85,13 @@ def toggle_issue_status(
 @router.get("/admin/fix-db-add-owner-id")
 def add_owner_column(db: Session = Depends(get_db)):
     try:
-        db.execute("ALTER TABLE issues ADD COLUMN IF NOT EXISTS owner_id INTEGER;")
+        db.execute(text("ALTER TABLE issues ADD COLUMN IF NOT EXISTS owner_id INTEGER;"))
         db.commit()
         return {"message": "✅ Column 'owner_id' added to issues table."}
     except Exception as e:
         return {"error": str(e)}
+    
+
 @router.get("/admin/check-columns")
 def check_columns(db: Session = Depends(get_db)):
     result = db.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='issues';"))
