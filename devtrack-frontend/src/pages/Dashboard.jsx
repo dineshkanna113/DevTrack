@@ -46,7 +46,7 @@ export default function Dashboard() {
       <h2>👤 Logged in as: <span style={{ color: "#3498db" }}>{email}</span></h2>
 
       <div style={{ marginTop: "1.5rem" }}>
-        <a href="/issues" style={{ textDecoration: "none", color: "#2ecc71", fontWeight: "bold" }}>
+        <a href="/issues" style={{ textDecoration: "none", color: "#1a1a1aff", fontWeight: "bold" }}>
           👉 View Issues
         </a>
       </div>
