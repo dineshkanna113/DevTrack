@@ -187,7 +187,7 @@ export default function Issues() {
         <span>
           Page <strong>{page}</strong> of {totalPages}
         </span>
-        <button onClick={() => setPage(page + 1)} disabled={page === totalPages} style={{ padding: "8px", marginLeft: "10px" }}>
+        <button onClick={() => setPage(page + 1)} disabled={page >= totalPages || issues.length === 0} style={{ padding: "8px", marginLeft: "10px" }}>
           Next ➡
         </button>
       </div>
