@@ -4,7 +4,7 @@ from sqlalchemy import text
 from models import Issue, User
 from database import SessionLocal
 from schemas import IssueCreate, IssueOut
-from typing import Optional
+from typing import Optional, List
 from routes.auth import get_current_user
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
