@@ -1,4 +1,3 @@
-/* GLOBAL RESET AND DARK BACKGROUND */
 body {
   margin: 0;
   padding: 0;
@@ -7,13 +6,19 @@ body {
   color: #ecf0f1;
 }
 
-/* CENTER EVERYTHING INSIDE ROOT */
 #root {
   display: flex;
   justify-content: center;
   align-items: flex-start;
   min-height: 100vh;
   padding-top: 2rem;
+}
+
+@media (max-width: 600px) {
+  #root {
+    padding: 1rem;
+    align-items: stretch;
+  }
 }
 
 
