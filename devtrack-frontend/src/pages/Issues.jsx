@@ -10,6 +10,11 @@ export default function Issues() {
   const [totalPages, setTotalPages] = useState(1);
 
   const token = localStorage.getItem("token");
+  if (!token || token === "null") {
+  console.warn("Missing or invalid token");
+  // Optionally redirect to login page
+  return;
+}
 
   const fetchIssues = async () => {
     setLoading(true);
@@ -31,6 +36,14 @@ export default function Issues() {
   useEffect(() => {
     fetchIssues();
   }, [page]);
+
+  useEffect(() => {
+  if (!token || token === "null") {
+    alert("Session expired. Redirecting to login.");
+    window.location.href = "/login"; // adjust your login route as needed
+  }
+}, []);
+
 
   const handleSubmit = async e => {
     e.preventDefault();
