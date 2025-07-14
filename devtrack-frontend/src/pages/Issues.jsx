@@ -115,14 +115,17 @@ export default function Issues() {
       </select>
 
       <h3>Issue List</h3>
-      {Array.isArray(issues) &&
-        issues
+      {loading ? (
+  <p style={{ textAlign: "center" }}>⏳ Loading issues...</p>
+) : Array.isArray(issues) && issues.length === 0 &&(<p style={{ textAlign: "center", color: "#888" }}>🎉 No issues yet! Add one above.</p>)
+        
           .filter(
             issue =>
               filter === "all" ||
               (filter === "open" && issue.status === "open") ||
               (filter === "closed" && issue.status === "closed")
           )
+          
           .map(issue => (
             <div
               key={issue.id}
