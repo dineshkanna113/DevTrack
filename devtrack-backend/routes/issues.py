@@ -113,3 +113,12 @@ def delete_issue(issue_id: int, db: Session = Depends(get_db), current_user: Use
     db.delete(issue)
     db.commit()
     return {"message": "Issue deleted"}
+@router.get("/admin/fix-null-owners")
+def assign_missing_owners(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    # Only allow for a known admin email (e.g., your own)
+    if current_user.email != "your_admin_email@example.com":
+        raise HTTPException(status_code=403, detail="Not authorized")
+
+    updated = db.query(Issue).filter(Issue.owner_id == None).update({Issue.owner_id: current_user.id})
+    db.commit()
+    return {"updated": updated}
