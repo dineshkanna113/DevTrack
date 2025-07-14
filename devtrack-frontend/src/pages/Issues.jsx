@@ -9,11 +9,15 @@ export default function Issues() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  localStorage.setItem("token", response.data.access_token);
-  if (!token) {
-  alert("Please login again.");
-  window.location.href = "/login"; // or your login route
-}
+  const token = localStorage.getItem("token");
+
+  // ✅ Check authentication on mount
+  useEffect(() => {
+    if (!token || token === "null") {
+      alert("Session expired. Redirecting to login.");
+      window.location.href = "/login";
+    }
+  }, []);
 
   const fetchIssues = async () => {
     setLoading(true);
@@ -36,14 +40,6 @@ export default function Issues() {
     fetchIssues();
   }, [page]);
 
-  useEffect(() => {
-  if (!token || token === "null") {
-    alert("Session expired. Redirecting to login.");
-    window.location.href = "/login"; // adjust your login route as needed
-  }
-}, []);
-
-
   const handleSubmit = async e => {
     e.preventDefault();
     if (!form.title.trim() || !form.description.trim()) {
@@ -55,7 +51,7 @@ export default function Issues() {
 
     try {
       await axios.post("https://devtrack-backend-758s.onrender.com/issues", form, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       setForm({ title: "", description: "", label: "task", assigned_to: "" });
       alert("Issue added");
@@ -119,49 +115,82 @@ export default function Issues() {
       </select>
 
       <h3>Issue List</h3>
-      {Array.isArray(issues) && issues
-        .filter(issue =>
-          filter === "all" ||
-          (filter === "open" && issue.status === "open") ||
-          (filter === "closed" && issue.status === "closed")
-        )
-        .map(issue => (
-          <div key={issue.id} style={{ border: "1px solid #ccc", padding: "10px", marginTop: "10px" }}>
-            <strong>{issue.title}</strong>
-            <p>{issue.description}</p>
-            <p>Label: {issue.label}</p>
-            <p>Assigned to: {issue.assigned_to}</p>
-            <p>Status: <span style={{ fontWeight: 'bold', color: issue.status === "open" ? "green" : "crimson" }}>{issue.status.toUpperCase()}</span></p>
-
-            <button
-              style={{ marginRight: "10px", backgroundColor: "#3498db", color: "white", border: "none", padding: "5px" }}
-              onClick={async () => {
-                await axios.patch(`https://devtrack-backend-758s.onrender.com/issues/${issue.id}/close`, {}, {
-                  headers: { Authorization: `Bearer ${token}` }
-                });
-                alert("Issue status toggled");
-                fetchIssues();
-              }}
+      {Array.isArray(issues) &&
+        issues
+          .filter(
+            issue =>
+              filter === "all" ||
+              (filter === "open" && issue.status === "open") ||
+              (filter === "closed" && issue.status === "closed")
+          )
+          .map(issue => (
+            <div
+              key={issue.id}
+              style={{ border: "1px solid #ccc", padding: "10px", marginTop: "10px" }}
             >
-              Mark as {issue.status === "open" ? "Closed" : "Open"}
-            </button>
+              <strong>{issue.title}</strong>
+              <p>{issue.description}</p>
+              <p>Label: {issue.label}</p>
+              <p>Assigned to: {issue.assigned_to}</p>
+              <p>
+                Status:{" "}
+                <span
+                  style={{
+                    fontWeight: "bold",
+                    color: issue.status === "open" ? "green" : "crimson",
+                  }}
+                >
+                  {issue.status.toUpperCase()}
+                </span>
+              </p>
 
-            <button
-              style={{ backgroundColor: "#e74c3c", color: "white", border: "none", padding: "5px" }}
-              onClick={async () => {
-                if (window.confirm("Delete this issue?")) {
-                  await axios.delete(`https://devtrack-backend-758s.onrender.com/issues/${issue.id}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                  });
-                  alert("Issue deleted");
+              <button
+                style={{
+                  marginRight: "10px",
+                  backgroundColor: "#3498db",
+                  color: "white",
+                  border: "none",
+                  padding: "5px",
+                }}
+                onClick={async () => {
+                  await axios.patch(
+                    `https://devtrack-backend-758s.onrender.com/issues/${issue.id}/close`,
+                    {},
+                    {
+                      headers: { Authorization: `Bearer ${token}` },
+                    }
+                  );
+                  alert("Issue status toggled");
                   fetchIssues();
-                }
-              }} 
-            >
-              Delete
-            </button>
-          </div>
-        ))}
+                }}
+              >
+                Mark as {issue.status === "open" ? "Closed" : "Open"}
+              </button>
+
+              <button
+                style={{
+                  backgroundColor: "#e74c3c",
+                  color: "white",
+                  border: "none",
+                  padding: "5px",
+                }}
+                onClick={async () => {
+                  if (window.confirm("Delete this issue?")) {
+                    await axios.delete(
+                      `https://devtrack-backend-758s.onrender.com/issues/${issue.id}`,
+                      {
+                        headers: { Authorization: `Bearer ${token}` },
+                      }
+                    );
+                    alert("Issue deleted");
+                    fetchIssues();
+                  }
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          ))}
 
       <div style={{ marginTop: "20px", textAlign: "center" }}>
         <button onClick={() => setPage(page - 1)} disabled={page === 1}>
