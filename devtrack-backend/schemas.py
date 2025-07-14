@@ -26,10 +26,9 @@ class IssueOut(IssueBase):
     id: int
     owner_id: Optional[int]                 # Include the user who created it
     model_config = ConfigDict(from_attributes=True)
-    
+
 class UserOut(BaseModel):
     id: int
     email: str
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
