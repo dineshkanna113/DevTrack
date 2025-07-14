@@ -7,6 +7,7 @@ from schemas import IssueCreate, IssueOut
 from typing import Optional
 from routes.auth import get_current_user
 from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 
 router = APIRouter()
 
@@ -44,28 +45,30 @@ def get_issues(
     total_pages = (total + limit - 1) // limit
     issues = query.offset(offset).limit(limit).all()
 
-    return JSONResponse(content={
-        "items": [IssueOut.model_validate(issue) for issue in issues],
+    return {
+        "items": [IssueOut.model_validate(issue).model_dump() for issue in issues],
         "total_pages": total_pages
-    })
+    }
 
 # ✅ POST create new issue
 @router.post("/issues", response_model=IssueOut)
-def create_issue(issue: IssueCreate, db: Session = Depends(get_db), current_user: int = Depends(get_current_user)):
+def create_issue(
+    issue: IssueCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     new_issue = Issue(
         title=issue.title,
         description=issue.description,
         status="open",
         label=issue.label,
         assigned_to=issue.assigned_to,
-        # Temporarily omit or hardcode this:
-        owner_id=current_user.id  
+        owner_id=current_user.id
     )
     db.add(new_issue)
     db.commit()
     db.refresh(new_issue)
     return new_issue
-
 
 # ✅ PATCH: toggle issue open/closed
 @router.patch("/issues/{issue_id}/close")
@@ -82,6 +85,7 @@ def toggle_issue_status(
     db.refresh(issue)
     return {"message": f"Issue status updated to {issue.status}", "status": issue.status}
 
+# ✅ Admin endpoint to add missing column
 @router.get("/admin/fix-db-add-owner-id")
 def add_owner_column(db: Session = Depends(get_db)):
     try:
@@ -90,8 +94,8 @@ def add_owner_column(db: Session = Depends(get_db)):
         return {"message": "✅ Column 'owner_id' added to issues table."}
     except Exception as e:
         return {"error": str(e)}
-    
 
+# ✅ Admin: check columns in the issues table
 @router.get("/admin/check-columns")
 def check_columns(db: Session = Depends(get_db)):
     result = db.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='issues';"))
