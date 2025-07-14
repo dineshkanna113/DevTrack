@@ -107,7 +107,7 @@ def delete_issue(issue_id: int, db: Session = Depends(get_db), current_user: Use
     if not issue:
         raise HTTPException(status_code=404, detail="Issue not found")
     
-    if issue.owner_id != current_user.id:
+    if issue.owner_id == current_user.id:   #check panra !=
         raise HTTPException(status_code=403, detail="Not authorized to delete this issue")
 
     db.delete(issue)
