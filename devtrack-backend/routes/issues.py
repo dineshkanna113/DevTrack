@@ -33,7 +33,6 @@ def get_issues(
     offset = (page - 1) * limit
     query = db.query(Issue)
 
-    # Optional filters
     if status in {"open", "closed"}:
         query = query.filter(Issue.status == status)
     if label:
@@ -49,6 +48,7 @@ def get_issues(
         "items": [IssueOut.model_validate(issue).model_dump() for issue in issues],
         "total_pages": total_pages
     }
+
 
 # ✅ POST create new issue
 @router.post("/issues", response_model=IssueOut)
