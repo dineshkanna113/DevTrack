@@ -1,12 +1,21 @@
-# React + Vite
+# DevTrack Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + TypeScript SPA for DevTrack. See the [root README](../README.md).
 
-Currently, two official plugins are available:
+```bash
+npm install
+cp .env.example .env      # VITE_API_URL=http://localhost:8000
+npm run dev               # http://localhost:5173
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+| Script | What it does |
+| --- | --- |
+| `npm run dev` | Vite dev server with HMR |
+| `npm run build` | Type-check and build to `dist/` |
+| `npm run lint` | ESLint (typescript-eslint, react-hooks) |
+| `npm run typecheck` | `tsc` in strict mode |
+| `npm test` | Vitest + React Testing Library |
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+> **Windows note:** Tailwind CSS v4 ships native binaries for 64-bit Node only.
+> If `npm run dev` fails with `lightningcss.win32-ia32-msvc.node`, install the
+> x64 build of Node.js.

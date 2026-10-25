@@ -1,0 +1,28 @@
+# Render Blueprint: one-click deploy of the API + Postgres.
+# The frontend deploys to Vercel (see devtrack-frontend/vercel.json).
+databases:
+  - name: devtrack-db
+    plan: free
+    databaseName: devtrack
+    user: devtrack
+
+services:
+  - type: web
+    name: devtrack-api
+    runtime: docker
+    rootDir: devtrack-backend
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: devtrack-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://devtrack-frontend-sigma.vercel.app,http://localhost:5173
+      - key: ANTHROPIC_API_KEY
+        sync: false
