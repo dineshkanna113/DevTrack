@@ -116,10 +116,10 @@ export function CreateIssueModal({
               <div className="mt-3 space-y-2 border-t border-violet-200 pt-3 text-sm dark:border-violet-500/30" aria-live="polite">
                 <p>
                   <span className="font-medium">{suggestion.suggested_title}</span>
-                  <span className="text-slate-500"> · {TYPE[suggestion.type].label} · {PRIORITY[suggestion.priority].label} priority</span>
+                  <span className="text-ink-muted"> · {TYPE[suggestion.type].label} · {PRIORITY[suggestion.priority].label} priority</span>
                 </p>
-                <p className="text-slate-600 dark:text-slate-300">{suggestion.summary}</p>
-                <p className="text-xs text-slate-500">{suggestion.reasoning}</p>
+                <p className="text-ink-muted">{suggestion.summary}</p>
+                <p className="text-xs text-ink-muted">{suggestion.reasoning}</p>
                 {suggestion.duplicates.length > 0 && (
                   <div className="rounded-lg bg-amber-50 p-2 text-amber-900 dark:bg-amber-500/10 dark:text-amber-200">
                     <p className="flex items-center gap-1.5 font-medium">
