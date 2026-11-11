@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Interface
+- Redesigned the web app. A sidebar now lists your projects, and the top bar shows breadcrumbs and a profile menu. On phones the sidebar opens as a slide-in menu.
+- Board columns have status-coloured markers and count chips. Each issue card shows its key, priority, type, due date and assignee in fixed places.
+- New split-screen sign-in and sign-up pages, with a product overview beside the form.
+- Project cards show open, done and total counts. The dashboard cards include a short explanation under each number.
+- Colours now come from light and dark design tokens in `src/index.css`. Inter and JetBrains Mono fonts are loaded from Google Fonts.
+- The layout patterns come from the Watermelon UI "Jobtracker" dashboard, rebuilt with plain Tailwind (no new dependencies).
+
 ## 2.1.0 — 2026-11-09
 
 ### Security

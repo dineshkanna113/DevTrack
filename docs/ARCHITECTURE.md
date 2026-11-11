@@ -209,7 +209,7 @@ src/
 │   ├── constants.ts       Labels and colours for statuses, priorities, types
 │   └── format.ts          Dates and "3 days ago"
 ├── hooks/queries.ts       TanStack Query hooks: caching, invalidation, optimistic updates
-├── components/            UI kit (ui.tsx), layout, issue board, issue dialogs
+├── components/            UI kit (ui.tsx), app shell (Layout.tsx), issue board, issue dialogs
 └── pages/                 One file per screen
 ```
 
@@ -219,3 +219,8 @@ Rules the frontend follows:
 2. **All HTTP goes through `lib/api.ts`.** One place for the base URL, the token and error handling.
 3. **View state lives in the URL** (filters, board/list, open issue), so any view can be bookmarked or shared.
 4. **Accessible by default**: native `<dialog>` for modals, labelled form fields, keyboard drag-and-drop, and a table view for every chart.
+5. **Colours come from design tokens.** `src/index.css` defines a small set of tokens (`canvas`, `sunken`, `surface`, `line`, `ink`, `ink-muted`, `brand`, ...) with light and dark values. Components use classes like `bg-surface` and `text-ink-muted` instead of fixed colours, so dark mode is one switch, not a second set of classes.
+
+### Visual design
+
+The app shell (sidebar with the user's projects, slim top bar with breadcrumbs, off-canvas menu on phones), the board columns with slanted status markers, and the card layout are adapted from the [Watermelon UI](https://ui.watermelon.sh) "Jobtracker" dashboard. Watermelon ships those as shadcn/ui components; DevTrack re-implements the patterns with plain Tailwind and its own small UI kit, so the bundle gains no new UI library.

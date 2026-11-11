@@ -29,6 +29,8 @@ npm run dev               # http://localhost:5173
 | `src/pages/` | One file per screen: sign-in, projects, board/list, dashboard |
 | `src/components/issues/` | Board, issue cards, new-issue dialog (with AI triage), issue detail dialog |
 | `src/components/ui.tsx` | Buttons, inputs, dialogs, badges: the shared UI kit |
+| `src/components/Layout.tsx` | The app shell: sidebar, top bar, mobile menu |
+| `src/index.css` | Design tokens (colours for light and dark mode) |
 | `src/lib/api.ts` | Every API call, the login token, error messages |
 | `src/hooks/queries.ts` | Data loading and caching (TanStack Query), including optimistic board moves |
 | `src/auth/` | Logged-in state and the guard for private pages |

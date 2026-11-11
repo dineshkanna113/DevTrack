@@ -52,8 +52,8 @@ function EditableText({ issue, onSave, saving }: {
             <Pencil className="size-4" />
           </Button>
         </div>
-        <p className="mt-2 text-sm whitespace-pre-wrap text-slate-600 dark:text-slate-300">
-          {issue.description || <span className="italic text-slate-400">No description</span>}
+        <p className="mt-2 text-sm whitespace-pre-wrap text-ink-muted">
+          {issue.description || <span className="italic text-ink-faint">No description</span>}
         </p>
       </div>
     );
@@ -129,16 +129,16 @@ function IssueBody({ issue, onClose }: { issue: Issue; onClose: () => void }) {
               {comments.map((c) => (
                 <li key={c.id} className="flex gap-2.5">
                   <Avatar name={c.author?.full_name ?? "?"} size="md" />
-                  <div className="min-w-0 flex-1 rounded-lg bg-slate-50 px-3 py-2 dark:bg-slate-800/60">
-                    <p className="text-xs text-slate-500">
-                      <span className="font-medium text-slate-700 dark:text-slate-200">{c.author?.full_name ?? "Deleted user"}</span>
+                  <div className="min-w-0 flex-1 rounded-xl bg-sunken px-3 py-2">
+                    <p className="text-xs text-ink-muted">
+                      <span className="font-medium text-ink">{c.author?.full_name ?? "Deleted user"}</span>
                       {" · "}{timeAgo(c.created_at)}
                     </p>
                     <p className="mt-1 text-sm whitespace-pre-wrap">{c.body}</p>
                   </div>
                 </li>
               ))}
-              {comments.length === 0 && <li className="text-sm text-slate-500">No comments yet.</li>}
+              {comments.length === 0 && <li className="text-sm text-ink-muted">No comments yet.</li>}
             </ul>
           )}
           <form onSubmit={submitComment} className="mt-3 space-y-2">
@@ -151,11 +151,11 @@ function IssueBody({ issue, onClose }: { issue: Issue; onClose: () => void }) {
 
         <section aria-labelledby="activity-heading">
           <h4 id="activity-heading" className="mb-3 text-sm font-semibold">Activity</h4>
-          <ol className="space-y-2 border-l border-slate-200 pl-4 dark:border-slate-800">
+          <ol className="space-y-2 border-l border-line pl-4">
             {activity?.map((a) => (
-              <li key={a.id} className="text-sm text-slate-600 dark:text-slate-400">
-                <span className="font-medium text-slate-800 dark:text-slate-200">{a.actor?.full_name ?? "Someone"}</span>{" "}
-                {describe(a)} <span className="text-xs text-slate-400">· {timeAgo(a.created_at)}</span>
+              <li key={a.id} className="text-sm text-ink-muted">
+                <span className="font-medium text-ink">{a.actor?.full_name ?? "Someone"}</span>{" "}
+                {describe(a)} <span className="text-xs text-ink-faint">· {timeAgo(a.created_at)}</span>
               </li>
             ))}
           </ol>
@@ -195,7 +195,7 @@ function IssueBody({ issue, onClose }: { issue: Issue; onClose: () => void }) {
         <Field label="Due date">
           {(id) => <Input id={id} type="date" value={issue.due_date ?? ""} onChange={(e) => void save({ due_date: e.target.value || null })} />}
         </Field>
-        <dl className="space-y-1 border-t border-slate-200 pt-3 text-xs text-slate-500 dark:border-slate-800">
+        <dl className="space-y-1 border-t border-line pt-3 text-xs text-ink-muted">
           <div><dt className="inline">Reporter: </dt><dd className="inline">{issue.reporter?.full_name ?? "—"}</dd></div>
           <div><dt className="inline">Created: </dt><dd className="inline">{formatDate(issue.created_at)}</dd></div>
           <div><dt className="inline">Updated: </dt><dd className="inline">{timeAgo(issue.updated_at)}</dd></div>
@@ -216,7 +216,7 @@ export function IssueDetailModal({ issueId, onClose }: { issueId: number | null;
   return (
     <Modal open={issueId !== null} onClose={onClose} title={title} wide>
       {isError ? (
-        <p className="text-sm text-slate-500">This issue doesn't exist or you no longer have access.</p>
+        <p className="text-sm text-ink-muted">This issue doesn't exist or you no longer have access.</p>
       ) : !issue ? (
         <Spinner />
       ) : (
