@@ -3,11 +3,26 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv, type UserConfig } from "vite";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 
-export default defineConfig({
+export default defineConfig(({ command, mode }) => {
+  // A production build without VITE_API_URL silently points the app at
+  // http://localhost:8000, which breaks for every visitor. Fail the build instead.
+  if (command === "build" && mode === "production") {
+    const env = loadEnv(mode, root, "VITE_");
+    if (!env.VITE_API_URL) {
+      throw new Error(
+        "VITE_API_URL is not set. Set it to the deployed API URL " +
+          "(e.g. in Vercel: Settings → Environment Variables) and rebuild.",
+      );
+    }
+  }
+  return config;
+});
+
+const config = {
   plugins: [react(), tailwindcss()],
   resolve: { alias: { "@": path.resolve(root, "src") } },
   build: {
@@ -29,4 +44,4 @@ export default defineConfig({
     setupFiles: ["./src/test/setup.ts"],
     css: false,
   },
-});
+} satisfies UserConfig;

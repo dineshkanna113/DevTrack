@@ -69,6 +69,8 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+        env:
+          VITE_API_URL: https://api.example.invalid  # the build requires it; value unused in CI
 
   docker:
     name: Docker images build

@@ -11,7 +11,7 @@ import {
   useUpdateIssue,
 } from "@/hooks/queries";
 import { errorMessage } from "@/lib/api";
-import { PRIORITIES, STATUS, STATUSES, TYPES } from "@/lib/constants";
+import { PRIORITIES, PRIORITY, STATUS, STATUSES, TYPE, TYPES } from "@/lib/constants";
 import { formatDate, timeAgo } from "@/lib/format";
 import type { Activity, Issue, IssueUpdate } from "@/lib/types";
 import { Avatar, Button, Field, Input, Modal, Select, Spinner, Textarea } from "../ui";
@@ -21,9 +21,15 @@ function describe(a: Activity): string {
   if (a.action === "created") return "created this issue";
   if (a.action === "commented") return "commented";
   if (a.field === "description") return "edited the description";
+  // Show the same labels the UI uses ("In progress", "Critical"), not raw API values.
+  const labels: Record<string, Record<string, { label: string }>> = {
+    status: STATUS,
+    priority: PRIORITY,
+    type: TYPE,
+  };
   const fmt = (v: string | null) => {
     if (v === null) return "none";
-    return a.field === "status" ? (STATUS[v as Issue["status"]]?.label ?? v) : v;
+    return (a.field && labels[a.field]?.[v]?.label) ?? v;
   };
   return `changed ${a.field?.replace("_", " ")} from ${fmt(a.old_value)} to ${fmt(a.new_value)}`;
 }
