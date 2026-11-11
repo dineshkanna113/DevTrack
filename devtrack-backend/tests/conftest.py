@@ -11,6 +11,7 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
+from app.core.rate_limit import login_limiter
 from app.core.security import create_access_token, hash_password
 from app.db.base import Base
 from app.db.session import get_db
@@ -33,6 +34,14 @@ def _schema() -> Iterator[None]:
     Base.metadata.create_all(engine)
     yield
     Base.metadata.drop_all(engine)
+
+
+@pytest.fixture(autouse=True)
+def _fresh_login_limiter() -> Iterator[None]:
+    # The limiter is process-wide; failed logins in one test must not block the next.
+    login_limiter.reset()
+    yield
+    login_limiter.reset()
 
 
 @pytest.fixture

@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { Loader2, X } from "lucide-react";
+import { Inbox, Loader2, X } from "lucide-react";
 import {
   forwardRef,
   useEffect,
@@ -14,17 +14,16 @@ import {
 import { initials } from "@/lib/format";
 
 const variants = {
-  primary: "bg-indigo-600 text-white hover:bg-indigo-500 disabled:bg-indigo-400",
-  secondary:
-    "bg-white text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-700 dark:hover:bg-slate-700",
-  ghost: "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800",
+  primary: "bg-brand text-white shadow-sm shadow-brand/20 hover:bg-brand-hover disabled:opacity-60",
+  secondary: "bg-sunken text-ink ring-1 ring-line hover:bg-raised hover:ring-ink-faint/40",
+  ghost: "text-ink-muted hover:bg-sunken hover:text-ink",
   danger: "bg-red-600 text-white hover:bg-red-500",
-  ai: "bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-500 hover:to-indigo-500",
+  ai: "bg-gradient-to-r from-violet-600 to-brand text-white shadow-sm shadow-violet-500/25 hover:from-violet-500 hover:to-brand-hover",
 };
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: keyof typeof variants;
-  size?: "sm" | "md";
+  size?: "sm" | "md" | "lg";
   loading?: boolean;
   icon?: ReactNode;
 }
@@ -43,8 +42,10 @@ export function Button({
     <button
       type="button"
       className={clsx(
-        "inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-70",
-        size === "sm" ? "px-2.5 py-1.5 text-sm" : "px-4 py-2 text-sm",
+        "inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap transition-colors disabled:cursor-not-allowed [&_svg]:shrink-0",
+        size === "sm" && "h-8 rounded-lg px-2.5 text-sm",
+        size === "md" && "h-10 rounded-xl px-4 text-sm",
+        size === "lg" && "h-11 rounded-xl px-5 text-base",
         variants[variant],
         className,
       )}
@@ -58,7 +59,7 @@ export function Button({
 }
 
 const fieldClass =
-  "block rounded-lg border-0 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm ring-1 ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:bg-slate-900 dark:text-slate-100 dark:ring-slate-700";
+  "block rounded-xl border-0 bg-sunken px-3 py-2.5 text-sm text-ink ring-1 ring-transparent transition placeholder:text-ink-faint hover:ring-line focus:bg-surface focus:ring-2 focus:ring-brand focus:outline-none";
 
 /** Fields fill their container unless the caller sets a width (e.g. `w-auto` in a toolbar). */
 const fieldClasses = (className?: string) =>
@@ -100,7 +101,7 @@ export function Field({
   const errorId = `${id}-error`;
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+      <label htmlFor={id} className="block text-sm font-medium text-ink-muted">
         {label}
       </label>
       {children(id, error ? errorId : undefined)}
@@ -117,7 +118,7 @@ export function Badge({ className, children }: { className?: string; children: R
   return (
     <span
       className={clsx(
-        "inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium whitespace-nowrap",
+        "inline-flex h-6 items-center gap-1 rounded-full px-2.5 text-xs font-medium whitespace-nowrap",
         className,
       )}
     >
@@ -126,13 +127,28 @@ export function Badge({ className, children }: { className?: string; children: R
   );
 }
 
-export function Avatar({ name, size = "sm" }: { name: string; size?: "sm" | "md" }) {
+// Stable per-person colour, so the same teammate is recognisable across screens.
+const AVATAR_TONES = [
+  "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300",
+  "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300",
+  "bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300",
+  "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300",
+  "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300",
+  "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300",
+];
+const toneFor = (name: string) =>
+  AVATAR_TONES[[...name].reduce((sum, ch) => sum + ch.charCodeAt(0), 0) % AVATAR_TONES.length];
+
+export function Avatar({ name, size = "sm" }: { name: string; size?: "sm" | "md" | "lg" }) {
   return (
     <span
       title={name}
       className={clsx(
-        "inline-flex shrink-0 items-center justify-center rounded-full bg-indigo-100 font-semibold text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300",
-        size === "sm" ? "size-6 text-[10px]" : "size-8 text-xs",
+        "inline-flex shrink-0 items-center justify-center rounded-full font-semibold ring-2 ring-surface",
+        toneFor(name),
+        size === "sm" && "size-6 text-[10px]",
+        size === "md" && "size-8 text-xs",
+        size === "lg" && "size-10 text-sm",
       )}
     >
       {initials(name)}
@@ -142,8 +158,8 @@ export function Avatar({ name, size = "sm" }: { name: string; size?: "sm" | "md"
 
 export function Spinner({ label = "Loading" }: { label?: string }) {
   return (
-    <div role="status" className="flex items-center justify-center gap-2 p-8 text-slate-500">
-      <Loader2 className="size-5 animate-spin" aria-hidden />
+    <div role="status" className="flex items-center justify-center gap-2 p-10 text-ink-muted">
+      <Loader2 className="size-5 animate-spin text-brand" aria-hidden />
       <span className="text-sm">{label}…</span>
     </div>
   );
@@ -153,29 +169,53 @@ export function EmptyState({
   title,
   description,
   action,
+  icon,
 }: {
   title: string;
   description?: string;
   action?: ReactNode;
+  icon?: ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-dashed border-slate-300 p-10 text-center dark:border-slate-700">
+    <div className="flex flex-col items-center rounded-2xl border border-dashed border-line bg-sunken/60 px-6 py-14 text-center">
+      <span className="mb-4 grid size-12 place-items-center rounded-2xl bg-surface text-ink-faint ring-1 ring-line">
+        {icon ?? <Inbox className="size-5" aria-hidden />}
+      </span>
       <h3 className="font-semibold">{title}</h3>
-      {description && <p className="mt-1 text-sm text-slate-500">{description}</p>}
-      {action && <div className="mt-4">{action}</div>}
+      {description && <p className="mt-1 max-w-sm text-sm text-ink-muted">{description}</p>}
+      {action && <div className="mt-5">{action}</div>}
     </div>
   );
 }
 
 export function Card({ className, children }: { className?: string; children: ReactNode }) {
   return (
-    <div
-      className={clsx(
-        "rounded-xl bg-white shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-800",
-        className,
-      )}
-    >
-      {children}
+    <div className={clsx("rounded-2xl border border-line bg-surface", className)}>{children}</div>
+  );
+}
+
+/** Page title row shared by every screen: heading, optional subtitle, actions on the right. */
+export function PageHeader({
+  title,
+  subtitle,
+  actions,
+  leading,
+}: {
+  title: ReactNode;
+  subtitle?: ReactNode;
+  actions?: ReactNode;
+  leading?: ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-w-0 items-center gap-3">
+        {leading}
+        <div className="min-w-0">
+          <h1 className="truncate text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h1>
+          {subtitle && <p className="mt-1 truncate text-sm text-ink-muted">{subtitle}</p>}
+        </div>
+      </div>
+      {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
     </div>
   );
 }
@@ -211,11 +251,11 @@ export function Modal({
       onClick={(e) => e.target === ref.current && onClose()}
       aria-label={title}
       className={clsx(
-        "m-auto w-[calc(100%-2rem)] rounded-2xl bg-white p-0 text-slate-900 shadow-2xl backdrop:bg-slate-950/50 backdrop:backdrop-blur-sm dark:bg-slate-900 dark:text-slate-100",
+        "m-auto w-[calc(100%-2rem)] rounded-2xl border border-line bg-surface p-0 text-ink shadow-2xl backdrop:bg-black/50 backdrop:backdrop-blur-sm",
         wide ? "max-w-3xl" : "max-w-lg",
       )}
     >
-      <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4 dark:border-slate-800">
+      <div className="flex items-center justify-between border-b border-line px-5 py-4">
         <h2 className="text-base font-semibold">{title}</h2>
         <Button variant="ghost" size="sm" onClick={onClose} aria-label="Close">
           <X className="size-4" />

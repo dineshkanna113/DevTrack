@@ -1,10 +1,35 @@
 import type { IssuePriority, IssueStatus, IssueType } from "./types";
 
-export const STATUSES: { value: IssueStatus; label: string; dot: string }[] = [
-  { value: "todo", label: "To do", dot: "bg-slate-400" },
-  { value: "in_progress", label: "In progress", dot: "bg-blue-500" },
-  { value: "in_review", label: "In review", dot: "bg-amber-500" },
-  { value: "done", label: "Done", dot: "bg-emerald-500" },
+/** `accent` colours the column marker; `chip` styles the count next to the column name. */
+export const STATUSES: { value: IssueStatus; label: string; dot: string; accent: string; chip: string }[] = [
+  {
+    value: "todo",
+    label: "To do",
+    dot: "bg-slate-400",
+    accent: "text-slate-400 dark:text-slate-500",
+    chip: "bg-slate-500/10 text-slate-600 dark:bg-slate-400/15 dark:text-slate-300",
+  },
+  {
+    value: "in_progress",
+    label: "In progress",
+    dot: "bg-blue-500",
+    accent: "text-blue-500 dark:text-blue-400",
+    chip: "bg-blue-500/10 text-blue-600 dark:bg-blue-400/15 dark:text-blue-300",
+  },
+  {
+    value: "in_review",
+    label: "In review",
+    dot: "bg-amber-500",
+    accent: "text-amber-500 dark:text-amber-400",
+    chip: "bg-amber-500/10 text-amber-700 dark:bg-amber-400/15 dark:text-amber-300",
+  },
+  {
+    value: "done",
+    label: "Done",
+    dot: "bg-emerald-500",
+    accent: "text-emerald-500 dark:text-emerald-400",
+    chip: "bg-emerald-500/10 text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-300",
+  },
 ];
 
 export const PRIORITIES: { value: IssuePriority; label: string; badge: string }[] = [

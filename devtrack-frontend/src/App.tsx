@@ -19,7 +19,7 @@ const DashboardPage = lazy(() =>
 
 function NotFound() {
   return (
-    <EmptyState title="Page not found" action={<Link to="/" className="text-indigo-600">Go home</Link>} />
+    <EmptyState title="Page not found" action={<Link to="/" className="font-medium text-brand">Go home</Link>} />
   );
 }
 

@@ -8,7 +8,7 @@ import { CreateIssueModal } from "@/components/issues/CreateIssueModal";
 import { DueDate, PriorityBadge, StatusLabel, TypeBadge } from "@/components/issues/IssueBadges";
 import { IssueDetailModal } from "@/components/issues/IssueDetailModal";
 import { KanbanBoard } from "@/components/issues/KanbanBoard";
-import { Avatar, Button, Card, EmptyState, Input, Modal, Select, Spinner } from "@/components/ui";
+import { Avatar, Button, Card, EmptyState, Input, Modal, PageHeader, Select, Spinner } from "@/components/ui";
 import { useIssues, useMembers, useProject, useUpdateIssue } from "@/hooks/queries";
 import { api, errorMessage } from "@/lib/api";
 import { PRIORITIES, STATUS, TYPES } from "@/lib/constants";
@@ -55,15 +55,15 @@ function MembersModal({ projectId, open, onClose }: { projectId: number; open: b
 
   return (
     <Modal open={open} onClose={onClose} title="Project members">
-      <ul className="divide-y divide-slate-200 dark:divide-slate-800">
+      <ul className="divide-y divide-line">
         {members.map((m) => (
           <li key={m.user.id} className="flex items-center gap-3 py-2.5">
             <Avatar name={m.user.full_name} size="md" />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{m.user.full_name}</p>
-              <p className="truncate text-xs text-slate-500">{m.user.email}</p>
+              <p className="truncate text-xs text-ink-faint">{m.user.email}</p>
             </div>
-            <span className="text-xs text-slate-500 capitalize">{m.role}</span>
+            <span className="rounded-full bg-sunken px-2 py-0.5 text-xs text-ink-muted capitalize">{m.role}</span>
             {isOwner && m.role !== "owner" && (
               <Button
                 variant="ghost"
@@ -94,32 +94,32 @@ function IssueTable({ issues, onOpen }: { issues: Issue[]; onOpen: (issue: Issue
   return (
     <Card className="overflow-x-auto">
       <table className="w-full min-w-[720px] text-sm">
-        <thead className="border-b border-slate-200 text-left text-xs text-slate-500 uppercase dark:border-slate-800">
+        <thead className="border-b border-line bg-sunken/60 text-left text-[11px] tracking-wider text-ink-faint uppercase">
           <tr>
             {["Key", "Title", "Status", "Type", "Priority", "Assignee", "Due", "Updated"].map((h) => (
-              <th key={h} scope="col" className="px-3 py-2.5 font-medium">{h}</th>
+              <th key={h} scope="col" className="px-4 py-3 font-semibold">{h}</th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+        <tbody className="divide-y divide-line">
           {issues.map((issue) => (
-            <tr key={issue.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-              <td className="px-3 py-2.5 font-mono text-xs text-slate-500">{issue.key}</td>
+            <tr key={issue.id} className="transition-colors hover:bg-sunken/70">
+              <td className="px-4 py-3 font-mono text-xs font-semibold text-ink-faint">{issue.key}</td>
               <td className="max-w-xs px-3 py-2.5">
-                <button type="button" className="truncate text-left font-medium hover:text-indigo-600" onClick={() => onOpen(issue)}>
+                <button type="button" className="truncate text-left font-medium hover:text-brand" onClick={() => onOpen(issue)}>
                   {issue.title}
                 </button>
               </td>
-              <td className="px-3 py-2.5"><StatusLabel value={issue.status} /></td>
-              <td className="px-3 py-2.5"><TypeBadge value={issue.type} /></td>
-              <td className="px-3 py-2.5"><PriorityBadge value={issue.priority} /></td>
-              <td className="px-3 py-2.5">
+              <td className="px-4 py-3"><StatusLabel value={issue.status} /></td>
+              <td className="px-4 py-3"><TypeBadge value={issue.type} /></td>
+              <td className="px-4 py-3"><PriorityBadge value={issue.priority} /></td>
+              <td className="px-4 py-3">
                 {issue.assignee ? (
                   <span className="flex items-center gap-1.5 whitespace-nowrap"><Avatar name={issue.assignee.full_name} />{issue.assignee.full_name}</span>
-                ) : <span className="text-slate-400">—</span>}
+                ) : <span className="text-ink-faint">—</span>}
               </td>
-              <td className="px-3 py-2.5"><DueDate issue={issue} /></td>
-              <td className="px-3 py-2.5 text-xs whitespace-nowrap text-slate-500">{timeAgo(issue.updated_at)}</td>
+              <td className="px-4 py-3"><DueDate issue={issue} /></td>
+              <td className="px-4 py-3 text-xs whitespace-nowrap text-ink-muted">{timeAgo(issue.updated_at)}</td>
             </tr>
           ))}
         </tbody>
@@ -186,30 +186,45 @@ export function ProjectPage() {
     );
 
   if (isError) {
-    return <EmptyState title="Project not found" description="It may have been deleted, or you're not a member." action={<Link to="/projects" className="text-indigo-600">Back to projects</Link>} />;
+    return <EmptyState title="Project not found" description="It may have been deleted, or you're not a member." action={<Link to="/projects" className="font-medium text-brand">Back to projects</Link>} />;
   }
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-wrap items-center gap-3">
-        <Link to="/projects" className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200" aria-label="Back to projects">
-          <ArrowLeft className="size-5" />
-        </Link>
-        <div className="min-w-0 flex-1">
-          <h1 className="truncate text-2xl font-semibold tracking-tight">{project?.name ?? "…"}</h1>
-          {project?.description && <p className="truncate text-sm text-slate-500">{project.description}</p>}
-        </div>
-        <Button variant="secondary" onClick={() => setShowMembers(true)}>
-          <span className="flex -space-x-1.5">{members.slice(0, 3).map((m) => <Avatar key={m.user.id} name={m.user.full_name} />)}</span>
-          <span className="hidden sm:inline">Members</span>
-        </Button>
-        <Button icon={<Plus className="size-4" />} onClick={() => setCreating(true)}>New issue</Button>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        leading={
+          <Link
+            to="/projects"
+            className="grid size-10 shrink-0 place-items-center rounded-xl bg-sunken text-ink-muted ring-1 ring-line hover:text-ink"
+            aria-label="Back to projects"
+          >
+            <ArrowLeft className="size-4" />
+          </Link>
+        }
+        title={
+          <span className="flex items-center gap-3">
+            {project && (
+              <span className="rounded-lg bg-brand-soft px-2 py-0.5 font-mono text-sm font-semibold text-brand-ink">{project.key}</span>
+            )}
+            <span className="truncate">{project?.name ?? "…"}</span>
+          </span>
+        }
+        subtitle={project?.description || undefined}
+        actions={
+          <>
+            <Button variant="secondary" onClick={() => setShowMembers(true)}>
+              <span className="flex -space-x-1.5">{members.slice(0, 3).map((m) => <Avatar key={m.user.id} name={m.user.full_name} />)}</span>
+              <span className="hidden sm:inline">Members</span>
+            </Button>
+            <Button icon={<Plus className="size-4" />} onClick={() => setCreating(true)}>New issue</Button>
+          </>
+        }
+      />
 
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative w-full sm:w-64">
-          <Search className="pointer-events-none absolute top-2.5 left-2.5 size-4 text-slate-400" aria-hidden />
-          <Input aria-label="Search issues" placeholder="Search issues…" className="w-full pl-8" value={search} onChange={(e) => setSearch(e.target.value)} />
+      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-line bg-surface p-2">
+        <div className="relative w-full sm:w-72">
+          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-faint" aria-hidden />
+          <Input aria-label="Search issues" placeholder="Search issues…" className="w-full pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
         <Select aria-label="Filter by type" className="w-auto" value={type ?? ""} onChange={(e) => setParam("type", e.target.value)}>
           <option value="">All types</option>
@@ -234,7 +249,7 @@ export function ProjectPage() {
             Clear filters
           </Button>
         )}
-        <div className="ml-auto flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800" role="group" aria-label="View">
+        <div className="ml-auto flex rounded-xl bg-sunken p-1" role="group" aria-label="View">
           {([["board", Columns3, "Board"], ["list", List, "List"]] as const).map(([value, Icon, label]) => (
             <button
               key={value}
@@ -242,8 +257,8 @@ export function ProjectPage() {
               aria-pressed={view === value}
               onClick={() => setParam("view", value === "board" ? null : value)}
               className={clsx(
-                "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-sm",
-                view === value ? "bg-white shadow-sm dark:bg-slate-700" : "text-slate-500",
+                "flex h-8 items-center gap-1.5 rounded-lg px-3 text-sm font-medium transition",
+                view === value ? "bg-surface text-ink shadow-sm ring-1 ring-line" : "text-ink-muted hover:text-ink",
               )}
             >
               <Icon className="size-4" aria-hidden /> {label}
@@ -264,7 +279,7 @@ export function ProjectPage() {
       ) : (
         <div className={clsx("space-y-3 transition-opacity", isFetching && "opacity-60")}>
           <IssueTable issues={data.items} onOpen={(i) => setParam("issue", String(i.id))} />
-          <nav className="flex items-center justify-between text-sm text-slate-500" aria-label="Pagination">
+          <nav className="flex items-center justify-between text-sm text-ink-muted" aria-label="Pagination">
             <span>{data.total} issues</span>
             <div className="flex items-center gap-2">
               <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => setParam("page", String(page - 1))}>Previous</Button>

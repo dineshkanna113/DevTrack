@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import APIRouter, FastAPI, Request, status
+from fastapi import APIRouter, FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
@@ -51,13 +51,22 @@ def create_app() -> FastAPI:
         api.include_router(module.router)
     app.include_router(api)
 
-    @app.get("/health", response_model=HealthOut, tags=["meta"])
-    def health(db: DbSession) -> HealthOut:
+    @app.get(
+        "/health",
+        response_model=HealthOut,
+        tags=["meta"],
+        responses={503: {"model": HealthOut, "description": "Database unreachable"}},
+    )
+    def health(db: DbSession, response: Response) -> HealthOut:
         try:
             db.execute(text("SELECT 1"))
             database = "ok"
         except SQLAlchemyError:
+            logger.exception("Health check: database unreachable")
             database = "unavailable"
+            # 503 so Render/Docker health checks mark the service unhealthy instead of
+            # serving an app that fails every request.
+            response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
         return HealthOut(
             status="ok" if database == "ok" else "degraded",
             database=database,
